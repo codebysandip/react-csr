@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npm run jest:test
+npx eslint --no-error-on-unmatched-pattern $(git diff --name-only --staged -- "*.ts" -- "*.tsx" -- ":(exclude)*.d.ts")
