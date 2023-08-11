@@ -6,6 +6,11 @@ const isMultipartRequest = function (req: Request) {
   return contentTypeHeader && contentTypeHeader.indexOf("multipart") > -1;
 };
 
+/**
+ * Proxy request middleware
+ * @param proxyUrl url to proxy request
+ * @returns 
+ */
 export const proxyMiddleware = function (proxyUrl: string) {
   return function (req: Request, res: Response, next: () => void) {
     let reqAsBuffer = false;

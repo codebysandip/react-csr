@@ -1,6 +1,6 @@
-/* ####### Cookie storage keys ####### */
-export const COOKIE_ACCESS_TOKEN = "accessToken";
-export const COOKIE_REFRESH_TOKEN = "refreshToken";
+/* ####### Local storage keys ####### */
+export const ACCESS_TOKEN = "accessToken";
+export const REFRESH_TOKEN = "refreshToken";
 
 /* ##### API URLS ##### */
 export const URL_REFRESH_TOKEN = "/api/refresh-token";
@@ -40,5 +40,7 @@ export const IS_DEV = process.env.ENV === "development";
 export const TEST_API_PORT = process.env.TEST_API_PORT || 3002;
 export const LOCAL_API_SERVER = `http://localhost:${TEST_API_PORT}`;
 
-export const API_URL = process.env.ENV === "cypress" ? LOCAL_API_SERVER : process.env.API_BASE_URL;
+export const API_URL = process.env.ENV === "cypress" ? LOCAL_API_SERVER : process.env.API_BASE_URL || LOCAL_API_SERVER;
 export const IS_CYPRESS = process.env.ENV === "cypress";
+
+export const PUBLIC_FOLDER = "build/public";

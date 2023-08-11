@@ -1,11 +1,11 @@
-import { logout as logoutAction } from "examples/auth/auth.redux.js";
+import { logout as logoutAction } from "examples/auth/auth.redux";
 import { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { ROUTE_LOGIN } from "src/const.js";
-import { withRouter, WithRouterProps } from "src/core/hoc/with-routes.hoc.js";
-import { CommonService } from "src/core/services/common.service.js";
-import { AppDispatch, RootState } from "src/redux/create-store.js";
+import { ROUTE_LOGIN } from "src/const";
+import { withRouter, WithRouterProps } from "src/core/hoc/with-routes.hoc";
+import { CommonService } from "src/core/services/common.service";
+import { AppDispatch, RootState } from "src/redux/create-store";
 
 class HeaderComp extends Component<HeaderProps> {
   public logout() {

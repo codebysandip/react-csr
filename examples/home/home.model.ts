@@ -1,4 +1,4 @@
-import { PageData } from "src/core/models/page-data.js";
+import { PageData } from "src/core/models/page-data";
 
 export interface Rating {
   rate: number;

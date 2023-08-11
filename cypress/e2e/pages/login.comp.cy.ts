@@ -1,5 +1,5 @@
 import UsersData from "mocks/api/user.json";
-import { ROUTE_LOGIN } from "src/const.js";
+import { ROUTE_LOGIN } from "src/const";
 
 describe("login page", () => {
   beforeEach(() => {

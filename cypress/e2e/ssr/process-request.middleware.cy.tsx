@@ -1,4 +1,4 @@
-import { ROUTE_404 } from "src/const.js";
+import { ROUTE_404 } from "src/const";
 
 describe("Process request middleware", () => {
   it("should return 404 response when route not available", () => {

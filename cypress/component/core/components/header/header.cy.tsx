@@ -1,7 +1,7 @@
-import { Header } from "core/components/header/header.js";
-import { loginSuccess } from "examples/auth/auth.redux.js";
+import { Header } from "core/components/header/header";
+import { loginSuccess } from "examples/auth/auth.redux";
 import HeaderData from "mocks/api/header.json";
-import { fetchHeader } from "src/app.redux.js";
+import { fetchHeader } from "src/app.redux";
 
 describe("Header", () => {
   beforeEach(() => {

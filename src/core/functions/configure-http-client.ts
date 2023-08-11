@@ -1,21 +1,13 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { AuthResponse } from "examples/auth/auth.model.js";
 import {
+  ACCESS_TOKEN,
   API_URL,
-  COOKIE_ACCESS_TOKEN,
-  COOKIE_REFRESH_TOKEN,
-  INTERNET_NOT_AVAILABLE,
-  URL_REFRESH_TOKEN,
-} from "src/const.js";
-import { CommonService } from "../services/common.service.js";
-import { CookieService } from "../services/cookie.service.js";
+  INTERNET_NOT_AVAILABLE
+} from "src/const";
+import { CommonService } from "../services/common.service";
 import {
-  ApiResponse,
-  getDefaultApiResponseObj,
-  HttpClient,
-  HttpClientOptions,
-} from "../services/http-client.js";
-import { setAccessAndRefreshToken } from "./get-token.js";
+  HttpClient
+} from "../services/http-client";
 
 export function getAxiosResponseFromResponse(response: AxiosResponse<any> | AxiosError<any>) {
   let resp: AxiosResponse | undefined;
@@ -86,7 +78,7 @@ export function configureHttpClient() {
   };
 
   HttpClient.onResponse = (apiResponse, options) => {
-    if (apiResponse.isError && apiResponse.message.length && options.showNotificationMessage) {
+    if (!apiResponse.isSuccess && apiResponse.message.length && options.showNotificationMessage) {
       CommonService.toast({
         type: "error",
         message: apiResponse.message[0],
@@ -95,7 +87,7 @@ export function configureHttpClient() {
   };
 
   HttpClient.getAuthToken = (options) => {
-    return CookieService.get(COOKIE_ACCESS_TOKEN, options.nodeReqObj) || "";
+    return localStorage.getItem(ACCESS_TOKEN) || "";
   };
 
   HttpClient.getAuthHeader = (token) => {
@@ -106,30 +98,30 @@ export function configureHttpClient() {
 
   HttpClient.internetNotAvailableMsg = INTERNET_NOT_AVAILABLE;
 
-  HttpClient.handleRefreshTokenFlow = (options: HttpClientOptions) => {
-    /* c8 ignore start */
-    CookieService.delete(COOKIE_ACCESS_TOKEN, options.nodeRespObj);
-    const refreshToken = CookieService.get(COOKIE_REFRESH_TOKEN, options.nodeReqObj);
-    const apiResponse = getDefaultApiResponseObj();
-    if (!refreshToken) {
-      apiResponse.status = 401;
-      apiResponse.message = ["Refresh Token not available"];
-      return Promise.resolve(apiResponse);
-    }
-    return HttpClient.post<AuthResponse>(URL_REFRESH_TOKEN, { refreshToken }).then((resp) => {
-      if (!resp.isError && resp.data) {
-        setAccessAndRefreshToken(resp as ApiResponse<AuthResponse>, options.nodeRespObj);
-        return HttpClient.sendRequest(options.url || "/", options.method || "GET", options);
-      }
-      CookieService.delete(COOKIE_REFRESH_TOKEN, options.nodeRespObj);
-      // if unable to generate token from refresh token then mark request as 401 unAuthorized
-      apiResponse.status = 401;
-      apiResponse.isError = true;
-      apiResponse.message = resp.message;
-      return apiResponse;
-    });
-    /* c8 ignore stop */
-  };
+  // HttpClient.handleRefreshTokenFlow = (options: HttpClientOptions) => {
+  //   /* c8 ignore start */
+  //   localStorage.removeItem(ACCESS_TOKEN);
+  //   const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+  //   const apiResponse = getDefaultApiResponseObj();
+  //   if (!refreshToken) {
+  //     apiResponse.status = 401;
+  //     apiResponse.message = ["Refresh Token not available"];
+  //     return Promise.resolve(apiResponse);
+  //   }
+  //   return HttpClient.post<AuthResponse>(URL_REFRESH_TOKEN, { refreshToken }).then((resp) => {
+  //     if (resp.isSuccess && resp.data) {
+  //       setAccessAndRefreshToken(resp as ApiResponse<AuthResponse>, options.nodeRespObj);
+  //       return HttpClient.sendRequest(options.url || "/", options.method || "GET", options);
+  //     }
+  //     localStorage.removeItem(REFRESH_TOKEN);
+  //     // if unable to generate token from refresh token then mark request as 401 unAuthorized
+  //     apiResponse.status = 401;
+  //     apiResponse.isSuccess = false;
+  //     apiResponse.message = resp.message;
+  //     return apiResponse;
+  //   });
+  //   /* c8 ignore stop */
+  // };
 
   HttpClient.setUrl = (url) => {
     return `${process.env.IS_SERVER ? API_URL : ""}${url}`;

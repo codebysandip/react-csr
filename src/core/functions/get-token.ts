@@ -1,14 +1,8 @@
-import { ApiResponse } from "core/services/http-client.js";
-import { AuthResponse, JwtToken, TokenData } from "examples/auth/auth.model.js";
-import { Request, Response } from "express";
-import { COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN } from "src/const.js";
-import { CookieService } from "../services/cookie.service.js";
+import { JwtToken, TokenData } from "examples/auth/auth.model";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "src/const";
 
-function getToken(key: string, req?: Request) {
-  if (process.env.IS_SERVER && !req) {
-    throw new Error("req can't be undefined in SSR");
-  }
-  const accessToken = CookieService.get(key, req);
+function getToken(key: string) {
+  const accessToken = localStorage.getItem(key);
   if (!accessToken) {
     return null;
   }
@@ -22,12 +16,12 @@ function getToken(key: string, req?: Request) {
   return null;
 }
 /**
- * get access token from cookie
+ * get access token
  * @param req Node Request Object
- * @returns access token from cookie
+ * @returns access token
  */
-export function getAccessToken(req?: Request) {
-  const tokenWithData = getToken(COOKIE_ACCESS_TOKEN, req);
+export function getAccessToken() {
+  const tokenWithData = getToken(ACCESS_TOKEN);
   if (!tokenWithData) {
     return null;
   }
@@ -60,12 +54,12 @@ export function isValidJwtToken(tokenData: JwtToken) {
   return null;
 }
 /**
- * get access token data from cookie
+ * get access token data
  * @param req Node Request Object
  * @returns decoded token of type T
  */
-export function getAccessTokenData(req?: Request) {
-  const tokenWithData = getToken(COOKIE_ACCESS_TOKEN, req);
+export function getAccessTokenData() {
+  const tokenWithData = getToken(ACCESS_TOKEN);
   if (!tokenWithData) {
     return null;
   }
@@ -73,38 +67,14 @@ export function getAccessTokenData(req?: Request) {
 }
 
 /**
- * get refresh token from cookie
- * @param req Node Request Object
- * @returns refresh token from cookie
+ * get refresh token
+ * @returns refresh token
  */
-export function getRefreshToken(req?: Request) {
-  const tokenWithData = getToken(COOKIE_REFRESH_TOKEN, req);
+export function getRefreshToken() {
+  const tokenWithData = getToken(REFRESH_TOKEN);
   if (!tokenWithData) {
     return null;
   }
   return tokenWithData.token;
 }
 
-/**
- * set access token and refresh token in cookie
- * with expiry time
- * @param accessToken Access Token
- * @param refreshToken Refresh Token
- * @param res Node Response Object
- */
-export function setAccessAndRefreshToken(apiResponse: ApiResponse<AuthResponse>, res?: Response) {
-  const accessTokenData = decodeToken<TokenData>(apiResponse.data.accessToken);
-  const refreshTokenData = decodeToken<TokenData>(apiResponse.data.refreshToken);
-  CookieService.set(
-    COOKIE_ACCESS_TOKEN,
-    apiResponse.data.accessToken,
-    new Date(accessTokenData.exp ? accessTokenData.exp * 1000 : Date.now()),
-    res,
-  );
-  CookieService.set(
-    COOKIE_REFRESH_TOKEN,
-    apiResponse.data.refreshToken,
-    new Date(refreshTokenData?.exp ? refreshTokenData?.exp * 1000 : Date.now()),
-    res,
-  );
-}

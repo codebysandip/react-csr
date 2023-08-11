@@ -1,31 +1,19 @@
-import { CompModule } from "core/models/route.model.js";
 import { Provider } from "react-redux";
-import { App } from "./app.js";
+import { App } from "./app";
 
-import { configureHttpClient } from "./core/functions/configure-http-client.js";
-import { ContextData } from "./core/models/context.model.js";
-import { createStore } from "./redux/create-store.js";
+import { configureHttpClient } from "./core/functions/configure-http-client";
+import { createStore } from "./redux/create-store";
 import "./style.scss";
 
 configureHttpClient();
 
-export default function ReactSsrApp(props: ReactSsrAppProps) {
+export default function ReactCsrApp(props: ReactCsrAppProps) {
   const store = createStore();
 
-  return (
-    <Provider store={store}>
-      {props.appComp ? props.appComp : <App module={props.module} />}
-    </Provider>
-  );
+  return <Provider store={store}>{props.appComp ? props.appComp : <App />}</Provider>;
 }
 
-interface ReactSsrAppProps {
-  module: CompModule;
-  /**
-   * ctx prop will have value only on SSR
-   * on client side it will always be undefined
-   */
-  ctx?: ContextData;
+interface ReactCsrAppProps {
   /**
    * appComp used here for cypress component testing
    */

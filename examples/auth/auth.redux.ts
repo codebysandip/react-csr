@@ -1,11 +1,28 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { ApiResponse } from "core/services/http-client.js";
-import { AuthResponse } from "examples/auth/auth.model.js";
-import { getAccessTokenData, setAccessAndRefreshToken } from "src/core/functions/get-token.js";
-import { GetState, ThunkApi } from "src/core/models/common.model.js";
-import { AppDispatch } from "src/redux/create-store.js";
-import { createSlice } from "src/redux/redux.imports.js";
-import { LoginPayload, TokenData } from "./auth.model.js";
+import { ApiResponse } from "core/services/http-client";
+import { AuthResponse } from "examples/auth/auth.model";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "src/const";
+import { getAccessTokenData } from "src/core/functions/get-token";
+import { GetState, ThunkApi } from "src/core/models/common.model";
+import { AppDispatch } from "src/redux/create-store";
+import { createSlice } from "src/redux/redux.imports";
+import { LoginPayload, TokenData } from "./auth.model";
+
+/**
+ * set access token and refresh token in cookie
+ * with expiry time
+ * @param accessToken Access Token
+ * @param refreshToken Refresh Token
+ */
+export function setAccessAndRefreshToken(apiResponse: ApiResponse<AuthResponse>) {
+  localStorage.setItem(
+    ACCESS_TOKEN,
+    apiResponse.data.accessToken
+  );
+  localStorage.setItem(
+    REFRESH_TOKEN,
+    apiResponse.data.refreshToken);
+}
 
 export interface AuthState {
   isLoggedIn: boolean;

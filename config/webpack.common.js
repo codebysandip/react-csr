@@ -9,11 +9,10 @@ import webpack from "webpack";
 
 import { readFileSync } from "fs";
 import { join } from "path";
-import { getPath, isLocalFn } from "./functions/helper-functions.js";
+import { getPath, isLocalFn } from "./functions/helper-functions";
 const require = createRequire(import.meta.url);
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-console.log(HtmlWebpackPlugin);
 /**
  * Common webpack config that will used for production as well as development env
  * @param {Object} env environment key value pair
@@ -45,12 +44,12 @@ export default function (env, args, isProd = false) {
   const entry = {};
 
   /**
-   * entry.server will produce client.js in build/public folder
+   * entry.server will produce client.js in build folder
    */
   entry.client = [getPath("src/client.tsx")];
   if (isLocal && isDev) {
     entry.client.push(
-      "webpack-hot-middleware/client?reload=true&noInfo=true&timeout=10000",
+      "webpack-hot-middleware/client?reload=true",
       "/node_modules/react-refresh/runtime.js",
     );
   }
@@ -84,28 +83,28 @@ export default function (env, args, isProd = false) {
       chunkFilename: miniCssChunkName,
     }),
     new Dotenv(),
-    new webpack.NormalModuleReplacementPlugin(/.js$/, (resource) => {
-      if (resource.context.indexOf("node_modules") !== -1) {
-        return;
-      }
+    // new webpack.NormalModuleReplacementPlugin(/.js$/, (resource) => {
+    //   if (resource.context.indexOf("node_modules") !== -1) {
+    //     return;
+    //   }
 
-      const context = resource.context
-        .replace(process.cwd(), "")
-        .replace(`${slash}node_modules`, "")
-        .substring(1)
-        .split(slash)[0];
-      if (
-        packageJson.dependencies[resource.request] ||
-        packageJson.devDependencies[resource.request] ||
-        context === "config"
-      ) {
-        return;
-      }
-      resource.request = resource.request.replace(/.js$/, "");
-      if (resource.request.indexOf("redux.imports") !== -1) {
-        resource.request = resource.request.replace("redux.imports", "redux.imports.prod");
-      }
-    }),
+    //   const context = resource.context
+    //     .replace(process.cwd(), "")
+    //     .replace(`${slash}node_modules`, "")
+    //     .substring(1)
+    //     .split(slash)[0];
+    //   if (
+    //     packageJson.dependencies[resource.request] ||
+    //     packageJson.devDependencies[resource.request] ||
+    //     context === "config"
+    //   ) {
+    //     return;
+    //   }
+    //   resource.request = resource.request.replace(/.js$/, "");
+    //   if (resource.request.indexOf("redux.imports") !== -1) {
+    //     resource.request = resource.request.replace("redux.imports", "redux.imports.prod");
+    //   }
+    // }),
   ];
   plugins.push(
     new CleanWebpackPlugin(),
@@ -135,7 +134,6 @@ export default function (env, args, isProd = false) {
         },
       ],
     }),
-    // new MetaInfoPlugin({ path: getPath("build/meta.json") }),
     new HtmlWebpackPlugin({
       filename: "index.html",
       title: "React CSR",
@@ -196,6 +194,7 @@ export default function (env, args, isProd = false) {
                     react: {
                       runtime: "automatic",
                       refresh: isLocal && env.ENV !== "cypress",
+                      development: isDev,
                     },
                   },
                 },

@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { Id, ToastContainerProps, ToastContent, ToastOptions } from "react-toastify";
-import { TOAST } from "src/const.js";
-import { Toaster as IToaster } from "src/core/models/toaster.model.js";
+import { TOAST } from "src/const";
+import { Toaster as IToaster } from "src/core/models/toaster.model";
 
 export function Toaster(props: ToastContainerProps) {
   const [lazyToast, setLazyToast] = useState<{
@@ -17,7 +17,7 @@ export function Toaster(props: ToastContainerProps) {
     window.addEventListener(TOAST, (e) => {
       /* istanbul ignore else */
       if (!lazyToast) {
-        import(/* webpackChunkName: "toaster" */ "./toaster-lazy.com.js").then((module) => {
+        import(/* webpackChunkName: "toaster" */ "./toaster-lazy.com").then((module) => {
           setLazyToast(module);
           toast = module.toast;
           showToast(e.detail);

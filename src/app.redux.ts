@@ -1,8 +1,7 @@
-import { PayloadAction } from "@reduxjs/toolkit";
-import { HeaderData } from "./app.model.js";
-import { GetState, ThunkApi } from "./core/models/common.model.js";
-import { AppDispatch } from "./redux/create-store.js";
-import { createSlice } from "./redux/redux.imports.js";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { HeaderData } from "./app.model";
+import { GetState, ThunkApi } from "./core/models/common.model";
+import { AppDispatch } from "./redux/create-store";
 
 export interface AppState {
   header?: HeaderData;
@@ -13,7 +12,7 @@ const initialState: AppState = {};
 export const fetchHeader = () => {
   return async (dispatch: AppDispatch, _getState: GetState, api: ThunkApi) => {
     return api.get<HeaderData>("/api/header").then((apiResponse) => {
-      if (!apiResponse.isError && apiResponse.data) {
+      if (apiResponse.isSuccess && apiResponse.data) {
         dispatch(fetchHeaderSuccess(apiResponse.data));
         apiResponse.data = {
           header: apiResponse.data,

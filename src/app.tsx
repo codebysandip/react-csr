@@ -1,14 +1,13 @@
-import { Header } from "core/components/header/header.js";
-import { SsrHead } from "core/components/ssr-head/ssr-head.comp.js";
+import { Header } from "core/components/header/header";
+import { SsrHead } from "core/components/ssr-head/ssr-head.comp";
 import { useEffect, useState } from "react";
 import { matchPath, useLocation } from "react-router";
 import { Route, Routes } from "react-router-dom";
-import { NO_HEADER_PATHS } from "./const.js";
-import LazyRoute from "./core/components/lazy-route/lazy-route.component.js";
-import { Toaster } from "./core/components/toaster/toaster.comp.js";
-import { useAppDispatch } from "./core/hook.js";
-import { CompModule } from "./core/models/route.model.js";
-import { Routes as PageRoutes } from "./routes.js";
+import { NO_HEADER_PATHS } from "./const";
+import LazyRoute from "./core/components/lazy-route/lazy-route.component";
+import { Toaster } from "./core/components/toaster/toaster.comp";
+import { useAppDispatch } from "./core/hook";
+import { Routes as PageRoutes } from "./routes";
 
 export function App(props: AppProps) {
   const dispatch = useAppDispatch();
@@ -71,9 +70,7 @@ export function App(props: AppProps) {
             return (
               <Route
                 path={r.path}
-                element={
-                  <LazyRoute moduleProvider={r.component} module={props.module} {...props} />
-                }
+                element={<LazyRoute moduleProvider={r.component} {...props} />}
                 key={idx}
               />
             );
@@ -86,6 +83,5 @@ export function App(props: AppProps) {
 }
 
 export interface AppProps {
-  module?: CompModule;
   pageProps?: any;
 }

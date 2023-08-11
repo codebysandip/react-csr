@@ -1,10 +1,10 @@
-import { GetInitialProps } from "core/models/common.model.js";
-import { ApiResponse, SHOW_LOADER } from "core/services/http-client.js";
+import { GetInitialProps } from "core/models/common.model";
+import { ApiResponse, SHOW_LOADER } from "core/services/http-client";
 import NodeCache from "node-cache";
 import React from "react";
-import { PageData } from "src/core/models/page-data.js";
-import { Toaster } from "src/core/models/toaster.model.js";
-import { MetaJson } from "src/ssr/functions/get-webpack-build-meta-json.js";
+import { PageData } from "src/core/models/page-data";
+import { Toaster } from "src/core/models/toaster.model";
+import { MetaJson } from "src/ssr/functions/get-webpack-build-meta-json";
 
 declare global {
     interface Window {

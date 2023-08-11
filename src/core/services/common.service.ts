@@ -1,8 +1,6 @@
-import { Response } from "express";
-import { COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN } from "src/const.js";
-import { ToastEvent } from "../models/custom-events.client.js";
-import { Toaster } from "../models/toaster.model.js";
-import { CookieService } from "./cookie.service.js";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "src/const";
+import { ToastEvent } from "../models/custom-events.client";
+import { Toaster } from "../models/toaster.model";
 
 export class CommonService {
   public static toast(toaster: Toaster) {
@@ -11,8 +9,8 @@ export class CommonService {
     }
   }
 
-  public static logout(res?: Response) {
-    CookieService.delete(COOKIE_ACCESS_TOKEN, res);
-    CookieService.delete(COOKIE_REFRESH_TOKEN, res);
+  public static logout() {
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN);
   }
 }

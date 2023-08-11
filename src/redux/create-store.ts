@@ -9,10 +9,10 @@ import {
 } from "@reduxjs/toolkit";
 import AuthReducer from "examples/auth/auth.redux";
 import { ThunkMiddleware } from "redux-thunk";
-import AppReducer from "src/app.redux.js";
-import { HttpClient } from "src/core/services/http-client.js";
-import { combineReducers, configureStore } from "./redux.imports.js";
-import { RootState as RootStateType } from "./root-state.js";
+import AppReducer from "src/app.redux";
+import { HttpClient } from "src/core/services/http-client";
+import { combineReducers, configureStore } from "./redux.imports.prod";
+import { RootState as RootStateType } from "./root-state";
 
 const reducer = {
   auth: AuthReducer,

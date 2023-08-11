@@ -4,17 +4,6 @@ declare global {
     namespace NodeJS {
         interface ProcessEnv {
             /**
-             * IS_SERVER used in code to check code running on server/client
-             * @example
-             * if (process.env.IS_SERVER) {
-             *  // code to execute on server
-             * }
-             * if (!process.env.IS_SERVER) {
-             *  // code to execute on client/browser
-             * }
-             */
-            IS_SERVER: boolean;
-            /**
              * IS_LOCAL enables webpack to run in development mode
              */
             IS_LOCAL: boolean;

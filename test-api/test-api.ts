@@ -1,12 +1,14 @@
 import bodyParser from "body-parser";
 import express from "express";
 import { existsSync, readFileSync } from "fs";
-import ProductsData from "mocks/api/product.json";
 import { join } from "path";
-import { URL_REFRESH_TOKEN } from "src/const.js";
-import { loginApi, refreshTokenApi, validateTokenMiddleware } from "./auth-api.js";
-import { etagMiddleware } from "./etag.middleware.js";
+import { URL_REFRESH_TOKEN } from "../src/const";
+import { loginApi, refreshTokenApi, validateTokenMiddleware } from "./auth-api";
+import { etagMiddleware } from "./etag.middleware";
 
+const ProductsData = JSON.parse(
+  readFileSync(join(process.cwd(), "mocks/api/product.json"), { encoding: "utf-8" }),
+);
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -43,7 +45,7 @@ app.post("/api/login", loginApi);
 app.post(URL_REFRESH_TOKEN, refreshTokenApi);
 
 app.get("/api/product/:id", validateTokenMiddleware, (req, res) => {
-  const product = ProductsData.products.find((p) => p.id === parseInt(req.params.id));
+  const product = ProductsData.products.find((p: any) => p.id === parseInt(req.params.id));
   res.status(product ? 200 : 204).json(product || {});
 });
 

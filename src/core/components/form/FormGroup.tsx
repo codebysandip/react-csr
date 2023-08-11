@@ -1,5 +1,5 @@
 import { Field, FormikErrors, FormikTouched } from "formik";
-import { FormValidation } from "src/core/services/form-validation.service.js";
+import { FormValidation } from "src/core/services/form-validation.service";
 
 export function FormGroup(props: FormGroupProps) {
   const {

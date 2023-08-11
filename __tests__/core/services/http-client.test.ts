@@ -1,16 +1,11 @@
 import { jest } from "@jest/globals";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { COOKIE_ACCESS_TOKEN } from "src/const.js";
-import { configureHttpClient } from "src/core/functions/configure-http-client.js";
-import { CookieService } from "src/core/services/cookie.service.js";
-import {
-  ApiResponse,
-  getDefaultApiResponseObj,
-  HttpClient,
-} from "src/core/services/http-client.js";
-import { EXPIRED_JWT_TOKEN, LONG_EXPIRY_JWT_TOKEN } from "../../utils/const.js";
-import { navigatorOnline } from "../../utils/spy-on/navigator.spy.js";
+import { ACCESS_TOKEN } from "src/const";
+import { configureHttpClient } from "src/core/functions/configure-http-client";
+import { ApiResponse, getDefaultApiResponseObj, HttpClient } from "src/core/services/http-client";
+import { EXPIRED_JWT_TOKEN, LONG_EXPIRY_JWT_TOKEN } from "../../utils/const";
+import { navigatorOnline } from "../../utils/spy-on/navigator.spy";
 
 const mock = new MockAdapter(axios);
 const request = {
@@ -49,7 +44,7 @@ describe("HttpClient", () => {
     navigatorOnline(true);
     configureHttpClient();
     HttpClient.retryTime = 10;
-    CookieService.delete(COOKIE_ACCESS_TOKEN);
+    localStorage.removeItem(ACCESS_TOKEN);
   });
 
   afterEach(() => {
@@ -91,7 +86,7 @@ describe("HttpClient", () => {
     mock
       .onGet(request.badRequestWithResponse.url)
       .replyOnce(400, request.badRequestWithResponse.responseBody);
-    window.document.cookie = `${COOKIE_ACCESS_TOKEN}=${LONG_EXPIRY_JWT_TOKEN}`;
+    window.document.cookie = `${ACCESS_TOKEN}=${LONG_EXPIRY_JWT_TOKEN}`;
     const apiResponse = await HttpClient.get(request.success.url, { isAuth: true });
     expect(apiResponse.response?.config.headers?.Authorization).toEqual(
       `Bearer ${LONG_EXPIRY_JWT_TOKEN}`,
@@ -100,7 +95,7 @@ describe("HttpClient", () => {
 
   it("Should return 401 status response when HttpClient.handleRefreshTokenFlow undefined and 401 server response", async () => {
     mock.onGet(request.success.url).replyOnce(401, request.success.responseBody);
-    CookieService.set(COOKIE_ACCESS_TOKEN, LONG_EXPIRY_JWT_TOKEN);
+    localStorage.set(ACCESS_TOKEN, LONG_EXPIRY_JWT_TOKEN);
     HttpClient.handleRefreshTokenFlow = undefined;
     const apiResponse = await HttpClient.get(request.success.url, { isAuth: true });
     expect(apiResponse.status).toBe(401);
@@ -108,7 +103,6 @@ describe("HttpClient", () => {
 
   it("Should call HttpClient.handleRefreshTokenFlow token when 401 server response", async () => {
     mock.onGet(request.success.url).replyOnce(401, request.success.responseBody);
-    window.document.cookie = `${COOKIE_ACCESS_TOKEN}=${EXPIRED_JWT_TOKEN}`;
     const mockFn = jest.fn<() => Promise<ApiResponse<unknown>>>();
     mockFn.mockReturnValueOnce(Promise.resolve(getDefaultApiResponseObj()));
     HttpClient.handleRefreshTokenFlow = mockFn;
@@ -118,7 +112,7 @@ describe("HttpClient", () => {
 
   it("Should throw error when HttpClient.handleRefreshTokenFlow will not return ApiResponse object", async () => {
     mock.onGet(request.success.url).replyOnce(401, request.success.responseBody);
-    window.document.cookie = `${COOKIE_ACCESS_TOKEN}=${EXPIRED_JWT_TOKEN}`;
+    window.document.cookie = `${ACCESS_TOKEN}=${EXPIRED_JWT_TOKEN}`;
     const mockFn = jest.fn<() => Promise<unknown>>();
 
     HttpClient.handleRefreshTokenFlow = mockFn as any;
@@ -199,7 +193,7 @@ describe("HttpClient", () => {
     HttpClient.getAuthHeader = undefined;
     expect.assertions(1);
     mock.onGet(request.success.url).replyOnce(200, request.success.responseBody);
-    window.document.cookie = `${COOKIE_ACCESS_TOKEN}=${LONG_EXPIRY_JWT_TOKEN}`;
+    window.document.cookie = `${ACCESS_TOKEN}=${LONG_EXPIRY_JWT_TOKEN}`;
 
     try {
       await HttpClient.get<Record<string, any>>(request.success.url, {
@@ -230,7 +224,6 @@ describe("HttpClient", () => {
   });
 
   it("Should set extra header when set in option", async () => {
-    HttpClient.isServer = false;
     mock.onGet(request.success.url).replyOnce(200, request.success.responseBody);
     const apiResponse = await HttpClient.get<Record<string, any>>(request.success.url, {
       extra: "test",
@@ -239,20 +232,20 @@ describe("HttpClient", () => {
     expect(apiResponse.response?.config.headers?.extra).toBe("test");
   });
 
-  it("Should set cookie in node response obj when api will return set-cookie", async () => {
-    HttpClient.isServer = true;
-    mock
-      .onGet(request.success.url)
-      .replyOnce(200, request.success.responseBody, { "Set-Cookie": "test" });
-    const mockSetHeader = jest.fn();
-    await HttpClient.get<Record<string, any>>(request.success.url, {
-      nodeRespObj: {
-        setHeader: mockSetHeader as any,
-      } as any,
-      nodeReqObj: {} as any,
-    });
-    expect(mockSetHeader).toBeCalled();
-  });
+  // it("Should set cookie in node response obj when api will return set-cookie", async () => {
+  //   HttpClient.isServer = true;
+  //   mock
+  //     .onGet(request.success.url)
+  //     .replyOnce(200, request.success.responseBody, { "Set-Cookie": "test" });
+  //   const mockSetHeader = jest.fn();
+  //   await HttpClient.get<Record<string, any>>(request.success.url, {
+  //     nodeRespObj: {
+  //       setHeader: mockSetHeader as any,
+  //     } as any,
+  //     nodeReqObj: {} as any,
+  //   });
+  //   expect(mockSetHeader).toBeCalled();
+  // });
 
   it("Should return correct status when response status is 200 and actual status in response body", async () => {
     mock.onGet(request.success.url).replyOnce(200, { status: 400 });

@@ -1,11 +1,18 @@
-import { Image } from "core/components/image/image.comp.js";
+import { Image } from "core/components/image/image.comp";
+import { useEffect } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { ContextDataWithStore } from "src/core/models/context-with-store.model.js";
-import { RootState } from "src/redux/create-store.js";
-import { fetchTopProducts } from "../home.redux.js";
+import { useAppDispatch } from "src/core/hook";
+import { RootState } from "src/redux/create-store";
+import { fetchTopProducts } from "../home.redux";
 
 const TopProducts = (props: TopProductsProps) => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchTopProducts());
+  }, []);
+
   return (
     <>
       <h1>Top Products</h1>
@@ -38,6 +45,3 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = {};
 export default connect(mapStateToProps, mapDispatchToProps)(TopProducts);
 
-export function loadData(ctx: ContextDataWithStore) {
-  return ctx.store.dispatch(fetchTopProducts());
-}

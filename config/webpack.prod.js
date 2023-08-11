@@ -5,9 +5,9 @@ import webpack from "webpack";
 import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import { merge } from "webpack-merge";
 import WorkboxPlugin from "workbox-webpack-plugin";
-import { getDevServerConfig } from "./functions/get-devServer-config.js";
-import { getPath, isLocalFn } from "./functions/helper-functions.js";
-import commonConfig from "./webpack.common.js";
+import { getDevServerConfig } from "./functions/get-devServer-config";
+import { getPath, isLocalFn } from "./functions/helper-functions";
+import commonConfig from "./webpack.common";
 
 /**
  * Prod config for webpack. This build will use for production.

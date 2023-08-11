@@ -1,83 +1,50 @@
-import express from "express";
 import webpack from "webpack";
 import WebpackDevMiddleware from "webpack-dev-middleware";
 import WebpackHotMiddleware from "webpack-hot-middleware";
-import webpackDevConfig from "../config/webpack.dev.js";
-import webpackProdConfig from "../config/webpack.prod.js";
-import { log } from "./logger.js";
+import webpackDevConfig from "../config/webpack.dev";
+import webpackProdConfig from "../config/webpack.prod";
+import { LOCAL_API_SERVER } from "../src/const";
+import { proxyMiddleware } from "../src/node/middlewares/proxy-middleware";
+import { startNodeServer } from "../src/node/server";
+import { log } from "./logger";
 
-const app = express();
-/**
- * flag to check if server build completed for first time only
- */
-// let isClientBuildCompleted = false;
-const PORT = parseInt(process.env.PORT || "5200");
-
-/**
- * start SSR app server with nodemon watch. Whenever their wil be change nodemon will restart
- * SSR node server
- */
-// const startAppNodeServer = () => {
-//   spawn(`nodemon --delay 2000ms --watch "build/server.js" --exec "node build/server.js"`, {
-//     stdio: "inherit",
-//     shell: true,
-//   });
-
-//   spawn("nodemon --watch build/testApi.js build/testApi.js", {
-//     stdio: "inherit",
-//     shell: true,
-//   });
-
-//   // start server only after server build completed
-//   app.listen(PORT, () => {
-//     log(`App listening on port ${PORT}`);
-//   });
-// };
 
 const env = process.env.ENV;
 log(`environment: ${env}`);
-let webpackClientConfig: any;
+let webpackConfig: any;
 
-const baseEnv = { IS_LOCAL: "true", IS_SERVER: "false", ENV: env };
+const baseEnv = { IS_LOCAL: "true", ENV: env };
 const isDev = env === "development" || env === "cypress";
 // webpack client build
 if (isDev) {
-  webpackClientConfig = webpackDevConfig(baseEnv, {});
+  webpackConfig = webpackDevConfig(baseEnv, {});
 } else {
-  webpackClientConfig = webpackProdConfig(baseEnv, {});
+  webpackConfig = webpackProdConfig(baseEnv, {});
 }
-const compiler = webpack(webpackClientConfig, () => {
-  console.log("client file changed!!");
-  // if (!isClientBuildCompleted) {
-  //   isClientBuildCompleted = true;
-  //   if (env === "development") {
-  //     setTimeout(() => {
-  //       startAppNodeServer();
-  //     }, 1000);
-  //   } else {
-  //     startAppNodeServer();
-  //   }
-  // }
-});
+const compiler = webpack(webpackConfig);
 
+const middlewares = [];
 // start webpack dev server for HMR
-app.use(
-  WebpackDevMiddleware(compiler, {
-    publicPath: webpackClientConfig.output.publicPath,
-    serverSideRender: false,
-    writeToDisk: true,
-  }),
-);
+middlewares.push(
+    WebpackDevMiddleware(compiler, {
+      publicPath: webpackConfig.output.publicPath,
+      serverSideRender: false,
+      writeToDisk: true,
+    }),
+  );
 
-app.use(
-  WebpackHotMiddleware(compiler, {
-    heartbeat: 10000,
-  }),
-);
+middlewares.push(WebpackHotMiddleware(compiler, {}));
+const app = startNodeServer(middlewares);
 
-app.listen(PORT, () => {
-  log(`App listening on port ${PORT}`);
-});
+if (process.env.LOCAL_API_SERVER) {
+  // Redirect every api request to test api
+  // app.all("/api/*", proxyMiddleware(`http://localhost:3002`));
+}
 
-// Redirect every request to SSR app
-// app.all("*", proxyMiddleware(`http://localhost:${PORT + 1}`));
+if (process.env.IS_LOCAL) {
+  // Following code is just for reference
+  // If api is not available and you want to return dummy response
+  // create a test api in test-api.ts and add here
+  // Don't forget to remove proxy otherwise response will always come from test api
+  app.get("/api/products", proxyMiddleware(LOCAL_API_SERVER));
+}

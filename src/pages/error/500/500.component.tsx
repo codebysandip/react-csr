@@ -1,6 +1,6 @@
 /* spell-checker: disable */
 import { Link } from "react-router-dom";
-import { ROUTE_HOME } from "src/const.js";
+import { ROUTE_HOME } from "src/const";
 import "./500.component.scss";
 
 export default function InternalServerError() {

@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { useStore } from "react-redux";
 import { useLocation } from "react-router";
-import { INTERNET_NOT_AVAILABLE, TOAST } from "src/const.js";
-import { CompModule, CompModuleImport } from "src/core/models/route.model.js";
-import { Toaster } from "src/core/models/toaster.model.js";
-import { HttpClient, isOnline, retryPromise } from "src/core/services/http-client.js";
-import { replaceReducer } from "src/redux/create-store.js";
-import { Loader } from "../loader/loader.comp.js";
-
-let locationPath = process.env.IS_SERVER ? "default" : location.pathname;
+import { INTERNET_NOT_AVAILABLE, TOAST } from "src/const";
+import { CompModule, CompModuleImport } from "src/core/models/route.model";
+import { Toaster } from "src/core/models/toaster.model";
+import { HttpClient, isOnline, retryPromise } from "src/core/services/http-client";
+import { replaceReducer } from "src/redux/create-store";
+import { Loader } from "../loader/loader.comp";
 
 /**
  * Lazy Load Route Component
@@ -17,20 +15,11 @@ let locationPath = process.env.IS_SERVER ? "default" : location.pathname;
  */
 export default function LazyRoute(props: LazyProps) {
   /* istanbul ignore next */
-  const [Comp, setComp] = useState<CompModule | null>(props.module || null);
+  const [Comp, setComp] = useState<CompModule | null>(null);
   const location = useLocation();
   const store = useStore();
 
-  if (props.module) {
-    replaceReducer(store, props.module.reducer as any);
-  }
-
   useEffect(() => {
-    if (locationPath === location.pathname) {
-      return;
-    }
-    locationPath = location.pathname;
-
     retryPromise(isOnline, 1000, HttpClient.maxRetryCount)
       .then(() => {
         props.moduleProvider().then((moduleObj) => {
@@ -62,10 +51,5 @@ export default function LazyRoute(props: LazyProps) {
 }
 
 export interface LazyProps {
-  /**
-   * Module to render
-   * Module will come only when page will reload check [client.tsx](../../../client.tsx)
-   */
-  module?: CompModule;
   moduleProvider: CompModuleImport;
 }

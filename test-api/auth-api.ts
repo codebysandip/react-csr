@@ -1,7 +1,12 @@
-import { TokenData } from "examples/auth/auth.model.js";
+import { TokenData } from "examples/auth/auth.model";
 import { NextFunction, Request, Response } from "express";
+import { readFileSync } from "fs";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import UsersData from "mocks/api/user.json";
+import { join } from "path";
+
+const UsersData = JSON.parse(
+  readFileSync(join(process.cwd(), "mocks/api/user.json"), { encoding: "utf-8" }),
+);
 
 const secretKey = "react-ssr";
 const accessTokenExpTime = "5m";
@@ -9,7 +14,7 @@ const refreshTokenExpTime = "7m";
 
 export function loginApi(req: Request, res: Response) {
   const { email, password } = req.body;
-  const user = UsersData.users.find((u) => u.email === email);
+  const user = UsersData.users.find((u: any) => u.email === email);
   if (!user) {
     res.status(400).json({
       message: "User not found!!",

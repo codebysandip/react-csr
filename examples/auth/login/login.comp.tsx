@@ -1,14 +1,14 @@
 import { Form, Formik } from "formik";
 import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
-import { PASSWORD_REGEX } from "src/const.js";
-import { FormGroup } from "src/core/components/form/FormGroup.js";
-import { withRouter, WithRouterProps } from "src/core/hoc/with-routes.hoc.js";
-import { FormValidation } from "src/core/services/form-validation.service.js";
-import { AppDispatch, RootState } from "src/redux/create-store.js";
+import { PASSWORD_REGEX } from "src/const";
+import { FormGroup } from "src/core/components/form/FormGroup";
+import { WithRouterProps, withRouter } from "src/core/hoc/with-routes.hoc";
+import { FormValidation } from "src/core/services/form-validation.service";
+import { AppDispatch, RootState } from "src/redux/create-store";
 import * as Yup from "yup";
-import { LoginPayload } from "../auth.model.js";
-import { login } from "../auth.redux.js";
+import { LoginPayload } from "../auth.model";
+import { login } from "../auth.redux";
 
 class Login extends Component<LoginProps, LoginState> {
   private loginSchema = Yup.object().shape({

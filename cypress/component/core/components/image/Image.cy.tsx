@@ -1,4 +1,4 @@
-import { Image } from "core/components/image/image.comp.js";
+import { Image } from "core/components/image/image.comp";
 
 describe("Image.cy.ts", () => {
   const loadingImage = "https://via.placeholder.com/150";

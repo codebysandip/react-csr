@@ -1,7 +1,7 @@
-import { FormGroup } from "core/components/form/FormGroup.js";
+import { FormGroup } from "core/components/form/FormGroup";
 import { Form, Formik } from "formik";
-import { PASSWORD_REGEX } from "src/const.js";
-import { FormValidation } from "src/core/services/form-validation.service.js";
+import { PASSWORD_REGEX } from "src/const";
+import { FormValidation } from "src/core/services/form-validation.service";
 import "src/style.scss";
 import * as Yup from "yup";
 

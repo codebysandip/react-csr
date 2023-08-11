@@ -1,28 +1,15 @@
 import {
-  configureStore as configureStoreWeb,
   combineReducers as combineReducersWeb,
+  configureStore as configureStoreWeb,
   createSlice as createSliceWeb,
 } from "@reduxjs/toolkit";
 
-let configureStoreFn: typeof configureStoreWeb;
-let combineReducersFn: typeof combineReducersWeb;
-let createSliceFn: typeof createSliceWeb;
+const configureStoreFn: typeof configureStoreWeb = configureStoreWeb;
+const combineReducersFn: typeof combineReducersWeb = combineReducersWeb;
+const createSliceFn: typeof createSliceWeb = createSliceWeb;
 
-if (process.env.IS_SERVER) {
-  // const require = createRequire(import.meta.url);
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const toolkitRaw = require("@reduxjs/toolkit");
-  const toolkit = toolkitRaw.default || toolkitRaw;
-  const { configureStore, combineReducers, createSlice } = toolkit;
-  configureStoreFn = configureStore;
-  combineReducersFn = combineReducers;
-  createSliceFn = createSlice;
-} else {
-  configureStoreFn = configureStoreWeb;
-  combineReducersFn = combineReducersWeb;
-  createSliceFn = createSliceWeb;
-}
-
-export { configureStoreFn as configureStore };
-export { combineReducersFn as combineReducers };
-export { createSliceFn as createSlice };
+export {
+  combineReducersFn as combineReducers,
+  configureStoreFn as configureStore,
+  createSliceFn as createSlice,
+};

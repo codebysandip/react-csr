@@ -1,30 +1,31 @@
 import { devServer } from "@cypress/webpack-dev-server";
 import { defineConfig } from "cypress";
 import { createRequire } from "module";
-import webpackDevConfig from "./config/webpack.dev.js";
+import webpackDevConfig from "./config/webpack.dev";
+
 const require = createRequire(import.meta.url);
 const webpackPreprocessor = require("@cypress/webpack-preprocessor");
 const defaults = webpackPreprocessor.defaultOptions;
-const getConfig = () => {
-  const baseEnv = { IS_LOCAL: "true", IS_SERVER: "false", ENV: "cypress" };
+
+const getWebpackConfig = () => {
+  const baseEnv = { IS_LOCAL: "true", ENV: "cypress" };
   const webpackClientConfig: any = webpackDevConfig(baseEnv, {});
   webpackClientConfig.entry.client = webpackClientConfig.entry.client[0];
-  webpackClientConfig.plugins = webpackClientConfig.plugins.filter(
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    (p: Object) => p.constructor.name !== "MetaInfoPlugin",
-  );
+
   webpackClientConfig.devServer = {};
   return webpackClientConfig;
 };
-const PORT = parseInt(process.env.PORT || "5000");
+
+const PORT = parseInt(process.env.PORT || "5200");
 const baseUrl = `http://localhost:${PORT}`;
+
 export default defineConfig({
   e2e: {
     baseUrl,
     video: false,
     setupNodeEvents(on, config) {
       require("@cypress/code-coverage/task")(on, config);
-      defaults.webpackOptions = getConfig();
+      defaults.webpackOptions = getWebpackConfig();
       on("file:preprocessor", webpackPreprocessor(defaults));
       // include any other plugin code...
 
@@ -39,7 +40,7 @@ export default defineConfig({
       return devServer({
         ...devServerConfig,
         framework: "react",
-        webpackConfig: getConfig(),
+        webpackConfig: getWebpackConfig(),
       });
     },
     viewportWidth: 1280,

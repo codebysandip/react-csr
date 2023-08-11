@@ -1,8 +1,8 @@
 import { mount } from "cypress/react18";
 import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
-import ReactSsrApp from "src/index.js";
-import { AppStore, createStore } from "src/redux/create-store.js";
+import ReactCsrApp from "src/index";
+import { AppStore, createStore } from "src/redux/create-store";
 
 export function setUp(Component: ReactNode) {
   const store: AppStore = createStore();
@@ -12,7 +12,7 @@ export function setUp(Component: ReactNode) {
   cy.wrap(store).as("store");
   return mount(
     <BrowserRouter>
-      <ReactSsrApp appComp={Component} module={{ default: null }} />
+      <ReactCsrApp appComp={Component} />
     </BrowserRouter>,
   );
 }

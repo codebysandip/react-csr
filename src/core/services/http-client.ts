@@ -238,7 +238,7 @@ export class HttpClient {
             data: undefined,
             message: [this.internetNotAvailableMsg],
             errorCode: -1,
-            isError: true,
+            isSuccess: false,
           };
           if (this.onResponse) {
             this.onResponse(apiResponse, options);
@@ -279,7 +279,7 @@ export class HttpClient {
       data: this.processData(response),
       message,
       errorCode: this.getErrorCode(response),
-      isError,
+      isSuccess: !isError,
     };
     if (process.env.NODE_ENV === "test") {
       apiResponse.response = response;
@@ -299,7 +299,7 @@ export class HttpClient {
       }
     }
     const apiResponse = this.getApiResponseObject<T>(response);
-    if (!apiResponse.isError) {
+    if (apiResponse.isSuccess) {
       return apiResponse;
     }
     // some api always send 200 status and follows a response structure
@@ -405,7 +405,7 @@ export function getDefaultApiResponseObj<T>(data?: T) {
     data: data || undefined,
     message: [],
     errorCode: -1,
-    isError: false,
+    isSuccess: true,
   };
   return response;
 }
@@ -448,10 +448,10 @@ export interface ApiResponse<T> {
   response?: AxiosResponse<T> | AxiosError<T>;
   /**
    * Can use to check response was success or error
-   * HttpClient will set true only in case of status code 4xx, 5xx, no internet available
+   * HttpClient will set false only in case of status code 4xx, 5xx, no internet available
    * or status code 600 (client error)
    */
-  isError: boolean;
+  isSuccess: boolean;
 }
 
 /**

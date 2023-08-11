@@ -1,4 +1,4 @@
-import { INTERNET_NOT_AVAILABLE, ROUTE_404, ROUTE_500, ROUTE_LOGIN } from "src/const.js";
+import { INTERNET_NOT_AVAILABLE, ROUTE_404, ROUTE_500, ROUTE_LOGIN } from "src/const";
 
 let originalOnLine: boolean;
 

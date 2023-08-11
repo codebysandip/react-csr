@@ -1,13 +1,13 @@
-import { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { Helmet } from "react-helmet";
+import { InView } from 'react-intersection-observer';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Image } from "src/core/components/image/image.comp.js";
-import { InView } from "src/core/components/in-view/in-view.comp.js";
-import { useAppDispatch } from "src/core/hook.js";
-import { RootState } from "src/redux/create-store.js";
+import { Image } from "src/core/components/image/image.comp";
+import { useAppDispatch } from "src/core/hook";
+import { RootState } from "src/redux/create-store";
 import "./home.comp.scss";
-import HomeReducer, { fetchProducts } from "./home.redux.js";
+import HomeReducer, { fetchProducts } from "./home.redux";
 
 const Home = (props: HomeProps) => {
   const dispatch = useAppDispatch();
@@ -15,14 +15,16 @@ const Home = (props: HomeProps) => {
     dispatch(fetchProducts());
   }, []);
   const pageData = props.pageData;
+
+  const TopProducts = React.lazy(() => import(/* webpackChunkName: "top-products" */"./components/top-products.comp"));
+  
   return (
     <>
       <Helmet>
         <title>{pageData.seo?.title || "My Title"}</title>
         <body className="my-class" />
-        {/* metaJson will available only on server side */}
-        {process.env.IS_SERVER && <link href={metaJson["home"]} rel="stylesheet" />}
       </Helmet>
+      <h1>Home Page123</h1>
       <div className="d-flex flex-row flex-wrap min-vh-100" data-test-id="home-page">
         {pageData.products.map((product, idx) => {
           return (
@@ -48,17 +50,22 @@ const Home = (props: HomeProps) => {
         })}
       </div>
       {/* test code for InView */}
-      <InView testIdAttribute={{ "data-test-id": "top-products-in-view" }}>
-        {(inView) =>
-          inView ? (
-            import("./components/top-products.comp.js")
-          ) : (
-            <div className="d-flex flex-row flex-wrap">
-              {[1, 2, 3].map((val) => (
-                <div className="productCard skeleton" key={val}></div>
-              ))}
-            </div>
-          )
+      <InView triggerOnce={true}>
+        {
+          ({ inView, ref }) => (
+            <div ref={ref}>
+              { inView ? 
+                (<Suspense>
+                  <TopProducts />
+                </Suspense>) : (
+                  <div className="d-flex flex-row flex-wrap">
+                  {[1, 2, 3].map((val) => (
+                    <div className="productCard skeleton" key={val}></div>
+                  ))}
+                </div>
+                ) }
+            </div>)
+          
         }
       </InView>
     </>

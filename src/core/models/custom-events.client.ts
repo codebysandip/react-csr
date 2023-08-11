@@ -1,6 +1,6 @@
-import { TOAST } from "src/const.js";
-import { Toaster } from "./toaster.model.js";
+import { TOAST } from "src/const";
+import { Toaster } from "./toaster.model";
 
 export function ToastEvent(options: Toaster) {
-  return new CustomEvent<Toaster>(TOAST, { detail: options })
+  return new CustomEvent<Toaster>(TOAST, { detail: options });
 }

@@ -1,13 +1,15 @@
 import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
-import { ContextDataWithStore } from "src/core/models/context-with-store.model.js";
-import { RootState } from "src/redux/create-store.js";
-import HomeReducer, { fetchProductById } from "../home.redux.js";
+import { WithRouterProps, withRouter } from "src/core/hoc/with-routes.hoc";
+import { AppDispatch, RootState } from "src/redux/create-store";
+import HomeReducer, { fetchProductById } from "../home.redux";
 import "./product-detail.scss";
 
 class ProductDetail extends Component<ProductDetailProps> {
-  public static async getInitialProps(ctx: ContextDataWithStore) {
-    return ctx.store.dispatch(fetchProductById(ctx.params.id as number, ctx));
+  public componentDidMount() {
+    const productId = this.props.router.params.id;
+    if (productId)
+      this.props.getProductById(+productId);
   }
 
   render(): ReactNode {
@@ -76,13 +78,16 @@ const mapStateToProps = (state: RootState) => {
     productById: state.home.productById,
   };
 };
-const mapDispatchToProps = () => {
-  return {};
+const mapDispatchToProps = (dispatch: AppDispatch) => {
+  return {
+    getProductById: (id: number) => dispatch(fetchProductById(id))
+  };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ProductDetail));
 
-interface ProductDetailProps extends ReturnType<typeof mapStateToProps> {}
+export interface ProductDetailProps extends ReturnType<typeof mapStateToProps>,
+  ReturnType<typeof mapDispatchToProps>, WithRouterProps{}
 
 export const reducer = {
   home: HomeReducer,
