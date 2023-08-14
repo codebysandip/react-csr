@@ -9,43 +9,36 @@ import webpack from "webpack";
 
 import { readFileSync } from "fs";
 import { join } from "path";
-import { getPath, isLocalFn } from "./functions/helper-functions";
+import { getDefinePluginObjFromEnv } from "./functions/get-define-plugin-obj-from-env.js";
+import { getPath, isLocalFn } from "./functions/helper-functions.js";
+import { tsconfigPathToWebpackPath } from "./functions/tsconfig-path-to-webpack-path.js";
+
 const require = createRequire(import.meta.url);
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 /**
  * Common webpack config that will used for production as well as development env
- * @param {Object} env environment key value pair
- * @returns webpack common config
+ *
+ * @param {Object} env Environment key value pair
+ * @returns Webpack common config
  */
 export default function (env, args, isProd = false) {
   const packageJson = JSON.parse(
     readFileSync(join(process.cwd(), "package.json"), { encoding: "utf-8" }),
   );
-  const tsconfigJson = JSON.parse(
-    readFileSync(join(process.cwd(), "tsconfig.json"), { encoding: "utf-8" }),
-  );
 
-  /**
-   * Is Build running for local development
-   */
+  /** Is Build running for local development */
   const isLocal = isLocalFn(env);
-  /**
-   * React client side css, js and other static will go here after build
-   */
+  /** React client side css, js and other static will go here after build */
   const clientBuildPath = getPath("build/public");
-  /**
-   * Output folder for client as well as server
-   */
+  /** Output folder for client as well as server */
   const outFolder = clientBuildPath;
   const isDev = env.ENV === "development";
   const isCypress = env.ENV === "cypress";
 
   const entry = {};
 
-  /**
-   * entry.server will produce client.js in build folder
-   */
+  /** Entry.server will produce client.js in build folder */
   entry.client = [getPath("src/client.tsx")];
   if (isLocal && isDev) {
     entry.client.push(
@@ -53,18 +46,8 @@ export default function (env, args, isProd = false) {
       "/node_modules/react-refresh/runtime.js",
     );
   }
-  /**
-   * Add webpack env key and value to webpack DefinePlugin.
-   * This will allow to replace process.env.key to value in React and Node
-   */
-  const definePluginObj = {};
-  Object.keys(env).forEach((key) => {
-    try {
-      definePluginObj[`process.env.${key}`] = JSON.parse(env[key]);
-    } catch {
-      definePluginObj[`process.env.${key}`] = JSON.stringify(env[key]);
-    }
-  });
+
+  const definePluginObj = getDefinePluginObjFromEnv(env);
   const miniCssFileName = !(isLocal || isCypress)
     ? "assets/css/style.[contenthash].css"
     : "assets/css/style.css";
@@ -83,28 +66,6 @@ export default function (env, args, isProd = false) {
       chunkFilename: miniCssChunkName,
     }),
     new Dotenv(),
-    // new webpack.NormalModuleReplacementPlugin(/.js$/, (resource) => {
-    //   if (resource.context.indexOf("node_modules") !== -1) {
-    //     return;
-    //   }
-
-    //   const context = resource.context
-    //     .replace(process.cwd(), "")
-    //     .replace(`${slash}node_modules`, "")
-    //     .substring(1)
-    //     .split(slash)[0];
-    //   if (
-    //     packageJson.dependencies[resource.request] ||
-    //     packageJson.devDependencies[resource.request] ||
-    //     context === "config"
-    //   ) {
-    //     return;
-    //   }
-    //   resource.request = resource.request.replace(/.js$/, "");
-    //   if (resource.request.indexOf("redux.imports") !== -1) {
-    //     resource.request = resource.request.replace("redux.imports", "redux.imports.prod");
-    //   }
-    // }),
   ];
   plugins.push(
     new CleanWebpackPlugin(),
@@ -141,12 +102,7 @@ export default function (env, args, isProd = false) {
     }),
   );
 
-  const alias = {};
-  const aliasPaths = tsconfigJson.compilerOptions.paths;
-  Object.keys(aliasPaths).forEach((key) => {
-    const aliasKey = key.replace("/*", "");
-    alias[aliasKey] = getPath(aliasPaths[key][0].replace("/*", ""));
-  });
+  const alias = tsconfigPathToWebpackPath();
 
   const config = {
     entry,

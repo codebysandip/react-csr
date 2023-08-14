@@ -9,7 +9,7 @@
   "editor.formatOnSave": true, // optional
   "editor.formatOnSaveMode": "file", // required to format on save
   "editor.tabSize": 2,
-  // "javascript.preferences.importModuleSpecifierEnding": "js",
+  "javascript.preferences.importModuleSpecifierEnding": "js",
   // "typescript.preferences.importModuleSpecifierEnding": "js",
   "cSpell.words": [
     "bahmutov",

@@ -1,11 +1,9 @@
 module.exports = {
   apps: [
     {
-      /**
-       * Change the name to project name
-       */
-      name: "React-SSR",
-      script: "./build/server.js",
+      /** Change the name to project name */
+      name: "React-CSR",
+      script: "./build/server.mjs",
       instances: "1",
       exec_mode: "fork",
       env_production: {

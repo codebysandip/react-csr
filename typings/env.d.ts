@@ -30,6 +30,10 @@ declare global {
              */
             LOCAL_API_SERVER: string;
             NODE_ENV?: string;
+            /**
+             * Set this env to generate stats when webpack build
+             */
+            STATS?: string;
         }
     }
 }

@@ -1,9 +1,18 @@
+import Dotenv from "dotenv-webpack";
+import webpack from "webpack";
 import nodeExternals from "webpack-node-externals";
+import { getDefinePluginObjFromEnv } from "./functions/get-define-plugin-obj-from-env.js";
 import { getPath, isLocalFn } from "./functions/helper-functions.js";
+import { tsconfigPathToWebpackPath } from "./functions/tsconfig-path-to-webpack-path.js";
 
 export default function (env, args) {
   /** Is Build running for local development */
   const isLocal = isLocalFn(env);
+  const isDev = env.ENV === "development";
+  const isCypress = env.ENV === "cypress";
+
+  const definePluginObj = getDefinePluginObjFromEnv(env);
+  const alias = tsconfigPathToWebpackPath();
 
   const config = {
     target: "node",
@@ -51,6 +60,7 @@ export default function (env, args) {
       ],
     },
     resolve: {
+      alias,
       extensions: [".ts", ".js"],
     },
     externals: [
@@ -60,7 +70,7 @@ export default function (env, args) {
         },
       }),
     ],
-    plugins: [],
+    plugins: [new webpack.DefinePlugin(definePluginObj), new Dotenv()],
     externalsPresets: { node: true },
   };
   return config;
