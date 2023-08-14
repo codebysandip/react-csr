@@ -1,8 +1,8 @@
 import { Header } from "core/components/header/header";
-import { SsrHead } from "core/components/ssr-head/ssr-head.comp";
 import { useEffect, useState } from "react";
 import { matchPath, useLocation } from "react-router";
 import { Route, Routes } from "react-router-dom";
+import { CsrHead } from "src/core/components/ssr-head/csr-head.comp";
 import { NO_HEADER_PATHS } from "./const";
 import LazyRoute from "./core/components/lazy-route/lazy-route.component";
 import { Toaster } from "./core/components/toaster/toaster.comp";
@@ -60,7 +60,7 @@ export function App(props: AppProps) {
   return (
     <>
       {/* Use SsrHead component to set common Head tags */}
-      <SsrHead />
+      <CsrHead />
       {/* Header and footer should not visible on error page if header/footer is dynamic.
       Why? because may be error page coming because of Header/Footer api */}
       {showHeader && <Header />}

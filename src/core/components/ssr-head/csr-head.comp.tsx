@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 /**
  * Use this component to set common head tags like meta, link and title
  */
-export function SsrHead() {
+export function CsrHead() {
   const serviceWorker = `
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {

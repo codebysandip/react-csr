@@ -1,4 +1,4 @@
-import { SsrHead } from "core/components/ssr-head/ssr-head.comp";
+import { SsrHead } from "src/core/components/ssr-head/csr-head.comp";
 
 export function Empty() {
   return <>{process.env.IS_SERVER && <SsrHead />}</>;
