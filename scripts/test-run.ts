@@ -6,7 +6,7 @@ import { exit } from "node:process";
   let PORT = 7000;
   let TEST_API_PORT = 7002;
   try {
-    await axios.get(`http://localhost:5000`, { responseType: "text" });
+    await axios.get(`http://localhost:5200`, { responseType: "text" });
     PORT = 5000;
     TEST_API_PORT = 3002;
   } catch {
@@ -21,7 +21,7 @@ import { exit } from "node:process";
   }
   spawnSync(
     // eslint-disable-next-line max-len
-    `npm run jest:test && cross-env TEST_API_PORT=${TEST_API_PORT} PORT=${PORT} npm run cypress:run`,
+    `cross-env TEST_API_PORT=${TEST_API_PORT} PORT=${PORT} npm run cypress:run`,
     {
       stdio: "inherit",
       shell: true,

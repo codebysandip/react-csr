@@ -65,7 +65,9 @@ export default function (env, args, isProd = false) {
       filename: miniCssFileName,
       chunkFilename: miniCssChunkName,
     }),
-    new Dotenv(),
+    new Dotenv({
+      path: getPath(`./env/${env.ENV}.env`),
+    }),
   ];
   plugins.push(
     new CleanWebpackPlugin(),

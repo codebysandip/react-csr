@@ -2,14 +2,12 @@ import express from "express";
 import { join } from "path";
 
 import bodyParser from "body-parser";
+import chalk from "chalk";
 import helmet from "helmet";
-import { createRequire } from "node:module";
 import { API_URL, PUBLIC_FOLDER } from "../const";
 import { proxyMiddleware } from "./middlewares/proxy-middleware";
 import { StaticRoute } from "./middlewares/static-files.middleware";
 
-const require = createRequire(import.meta.url);
-require("dotenv").config();
 
 /**
  * exported this function from here because we are using the same in scripts/build.ts  
@@ -36,12 +34,14 @@ export function startNodeServer(middlewares: any[] = []) {
   /* istanbul ignore if */
   if (!API_URL) {
     throw new Error(
-      "Please add .env file if not available. Add LOCAL_API_SERVER and API_BASE_URL in .env file",
+      `Please add env/${process.env.ENV}.env file if not available. Add API_BASE_URL in .env file`,
     );
   }
 
   // proxy to api to tackle cors problem
   app.all("/api/*", proxyMiddleware(API_URL));
+
+  console.log(chalk.yellow("/api/* request will proxy to ", API_URL));
 
   app.use(
     helmet({

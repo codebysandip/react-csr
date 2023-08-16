@@ -1,15 +1,16 @@
 import ReactRefreshPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import webpack from "webpack";
 import { merge } from "webpack-merge";
-import { getDevServerConfig } from "./functions/get-devServer-config";
-import commonConfig from "./webpack.common";
+import { getDevServerConfig } from "./functions/get-devServer-config.js";
+import commonConfig from "./webpack.common.js";
 
 /**
- * Dev config for webpack. This build should not use for production.
- * It's for local development only
- * @param {[key:string]: string} env environment key value pair provided when running webpack command
- * @param {*} args args
- * @returns dev env webpack config
+ * Dev config for webpack. This build should not use for production. It's for local development only
+ *
+ * @param {[key:string]: string} env Environment key value pair provided when running webpack
+ *   command
+ * @param {any} args Args
+ * @returns Dev env webpack config
  */
 const devConfig = (env) => {
   const plugins = [];

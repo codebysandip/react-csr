@@ -36,11 +36,6 @@ middlewares.push(
 middlewares.push(WebpackHotMiddleware(compiler, {}));
 const app = startNodeServer(middlewares);
 
-if (process.env.LOCAL_API_SERVER) {
-  // Redirect every api request to test api
-  // app.all("/api/*", proxyMiddleware(`http://localhost:3002`));
-}
-
 if (process.env.IS_LOCAL) {
   // Following code is just for reference
   // If api is not available and you want to return dummy response

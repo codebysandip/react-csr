@@ -2,7 +2,7 @@ import { Header } from "core/components/header/header";
 import { useEffect, useState } from "react";
 import { matchPath, useLocation } from "react-router";
 import { Route, Routes } from "react-router-dom";
-import { CsrHead } from "src/core/components/ssr-head/csr-head.comp";
+import { CsrHead } from "src/core/components/csr-head/csr-head.comp";
 import { NO_HEADER_PATHS } from "./const";
 import LazyRoute from "./core/components/lazy-route/lazy-route.component";
 import { Toaster } from "./core/components/toaster/toaster.comp";

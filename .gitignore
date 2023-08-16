@@ -6,3 +6,4 @@ reports
 .nyc_output
 lighthouse/pagespeed.svg
 lighthouse/report.json
+cypress/screenshots

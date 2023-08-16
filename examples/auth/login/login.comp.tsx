@@ -6,14 +6,14 @@ import { FormGroup } from "src/core/components/form/FormGroup";
 import { WithRouterProps, withRouter } from "src/core/hoc/with-routes.hoc";
 import { FormValidation } from "src/core/services/form-validation.service";
 import { AppDispatch, RootState } from "src/redux/create-store";
-import * as Yup from "yup";
+import { object, string } from "yup";
 import { LoginPayload } from "../auth.model";
 import { login } from "../auth.redux";
 
 class Login extends Component<LoginProps, LoginState> {
-  private loginSchema = Yup.object().shape({
-    email: Yup.string().required().email(),
-    password: Yup.string().required().matches(PASSWORD_REGEX, { name: "password" }),
+  private loginSchema = object().shape({
+    email: string().required().email(),
+    password: string().required().matches(PASSWORD_REGEX, { name: "password" }),
   });
 
   private navigateToHomeIfLoggedIn() {

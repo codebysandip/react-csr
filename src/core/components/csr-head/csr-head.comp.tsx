@@ -21,17 +21,8 @@ export function CsrHead() {
 
   return (
     <Helmet>
-      <title>Default Title1</title>
+      <title>SimpleO App</title>
       {process.env.ENV === "production" && <script>{`${serviceWorker}`}</script>}
-      <meta
-        name="description"
-        content="Open Source React SSR High Performance Architecture.
-      Goal of this architecture to saves month of initial phase development"
-      />
-      <meta
-        name="keywords"
-        content="React, ReactJs, ReactJs Server Side Rendering, SSR, React SSR"
-      />
       <meta charSet="utf-8" />
       <meta name="theme-color" content="#f8f9fa" />
       <meta

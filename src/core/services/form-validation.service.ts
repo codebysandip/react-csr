@@ -1,4 +1,4 @@
-import * as Yup from "yup";
+import { ObjectSchema, ValidationError } from "yup";
 
 export class FormValidation {
   private static error = new Map<string, string>();
@@ -23,13 +23,13 @@ export class FormValidation {
     return errorMessage;
   }
 
-  public static validateForm(schema: Yup.ObjectSchema<any>, formValue: any) {
+  public static validateForm(schema: ObjectSchema<any>, formValue: any) {
     const errorObj: Record<string, string> = {};
     try {
       schema.validateSync(formValue, { abortEarly: false });
     } catch (error: any) {
       if (error.inner && Array.isArray(error.inner)) {
-        (error.inner as Yup.ValidationError[]).forEach((validationError: Yup.ValidationError) => {
+        (error.inner as ValidationError[]).forEach((validationError: ValidationError) => {
           const path = validationError.path || "default";
           const fieldType = schema.fields[path].type;
           let errorType =
