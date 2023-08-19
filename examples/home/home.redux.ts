@@ -1,7 +1,8 @@
-import { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { redirectTo } from "src/app.redux";
+import { ROUTE_404, ROUTE_500 } from "src/const";
 import { GetState, ThunkApi } from "src/core/models/common.model";
 import { AppDispatch } from "src/redux/create-store";
-import { createSlice } from "src/redux/redux.imports";
 import { HomeData, Product } from "./home.model";
 
 export interface HomeState {
@@ -21,7 +22,18 @@ export const fetchProducts = () => {
     const apiResponse = await api.get<HomeData>("/api/product", {
       extra: "home/productsPageDataLoaded",
     });
-    dispatch(productsPageDataLoaded(apiResponse.data || { products: [] }));
+    dispatch(
+      productsPageDataLoaded(
+        apiResponse.isSuccess && apiResponse.data ? apiResponse.data : { products: [] },
+      ),
+    );
+    if (!apiResponse.isSuccess) {
+      if (apiResponse.status === 500) {
+        dispatch(redirectTo({ path: ROUTE_500 }));
+      } else if (apiResponse.status === 404) {
+        dispatch(redirectTo({ path: ROUTE_404 }));
+      }
+    }
     return apiResponse;
   };
 };

@@ -1,17 +1,18 @@
 import {
   AnyAction,
+  combineReducers,
+  configureStore,
   Dispatch,
   EnhancedStore,
   MiddlewareArray,
   ReducersMapObject,
   Store,
-  ThunkDispatch,
+  ThunkDispatch
 } from "@reduxjs/toolkit";
 import AuthReducer from "examples/auth/auth.redux";
 import { ThunkMiddleware } from "redux-thunk";
 import AppReducer from "src/app.redux";
 import { HttpClient } from "src/core/services/http-client";
-import { combineReducers, configureStore } from "./redux.imports.prod";
 import { RootState as RootStateType } from "./root-state";
 
 const reducer = {
@@ -19,9 +20,9 @@ const reducer = {
   app: AppReducer,
 };
 /**
- * All reducers will always hold all the reducers loaded
- * on client side during lazy load reducers will load on page change
- * allReduces will hold all default reducers + lazy loaded reducers
+ * All reducers will always hold all the reducers loaded\
+ * On client side during lazy load reducers will load on page change\
+ * AllReduces will hold all default reducers + lazy loaded reducers
  */
 let allReducers: ReducersMapObject = {
   ...reducer,

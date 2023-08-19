@@ -1,12 +1,18 @@
 import { AxiosError, AxiosResponse } from "axios";
+import { AuthResponse } from "examples/auth/auth.model";
+import { setAccessAndRefreshToken } from "examples/auth/auth.redux";
 import {
   ACCESS_TOKEN,
   API_URL,
-  INTERNET_NOT_AVAILABLE
+  INTERNET_NOT_AVAILABLE,
+  REFRESH_TOKEN,
+  URL_REFRESH_TOKEN
 } from "src/const";
-import { CommonService } from "../services/common.service";
 import {
-  HttpClient
+  ApiResponse,
+  getDefaultApiResponseObj,
+  HttpClient,
+  HttpClientOptions
 } from "../services/http-client";
 
 export function getAxiosResponseFromResponse(response: AxiosResponse<any> | AxiosError<any>) {
@@ -25,10 +31,7 @@ export function configureHttpClient() {
     return resp?.data.status || resp?.status || 0;
   };
 
-  /**
-   * To process message by your own replace this function code
-   * with your own code
-   */
+  /** To process message by your own replace this function code with your own code */
   HttpClient.processMessage = (response: AxiosResponse<any> | AxiosError<any>) => {
     const resp = getAxiosResponseFromResponse(response);
 
@@ -52,8 +55,9 @@ export function configureHttpClient() {
     return message;
   };
   /**
-   * Replace this function body with your own code if api return different type of response
-   * While replacing remember that this function will get called for success as well as error response
+   * Replace this function body with your own code if api return different type of response While
+   * replacing remember that this function will get called for success as well as error response
+   *
    * @param response AjaxResponse<any> | AjaxError
    * @returns Api Response
    */
@@ -77,15 +81,6 @@ export function configureHttpClient() {
     return resp?.data?.status || resp?.status || 0;
   };
 
-  HttpClient.onResponse = (apiResponse, options) => {
-    if (!apiResponse.isSuccess && apiResponse.message.length && options.showNotificationMessage) {
-      CommonService.toast({
-        type: "error",
-        message: apiResponse.message[0],
-      });
-    }
-  };
-
   HttpClient.getAuthToken = (options) => {
     return localStorage.getItem(ACCESS_TOKEN) || "";
   };
@@ -98,30 +93,31 @@ export function configureHttpClient() {
 
   HttpClient.internetNotAvailableMsg = INTERNET_NOT_AVAILABLE;
 
-  // HttpClient.handleRefreshTokenFlow = (options: HttpClientOptions) => {
-  //   /* c8 ignore start */
-  //   localStorage.removeItem(ACCESS_TOKEN);
-  //   const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-  //   const apiResponse = getDefaultApiResponseObj();
-  //   if (!refreshToken) {
-  //     apiResponse.status = 401;
-  //     apiResponse.message = ["Refresh Token not available"];
-  //     return Promise.resolve(apiResponse);
-  //   }
-  //   return HttpClient.post<AuthResponse>(URL_REFRESH_TOKEN, { refreshToken }).then((resp) => {
-  //     if (resp.isSuccess && resp.data) {
-  //       setAccessAndRefreshToken(resp as ApiResponse<AuthResponse>, options.nodeRespObj);
-  //       return HttpClient.sendRequest(options.url || "/", options.method || "GET", options);
-  //     }
-  //     localStorage.removeItem(REFRESH_TOKEN);
-  //     // if unable to generate token from refresh token then mark request as 401 unAuthorized
-  //     apiResponse.status = 401;
-  //     apiResponse.isSuccess = false;
-  //     apiResponse.message = resp.message;
-  //     return apiResponse;
-  //   });
-  //   /* c8 ignore stop */
-  // };
+  HttpClient.handleRefreshTokenFlow = (options: HttpClientOptions) => {
+    /* c8 ignore start */
+    localStorage.removeItem(ACCESS_TOKEN);
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+    const apiResponse = getDefaultApiResponseObj();
+    if (!refreshToken) {
+      apiResponse.status = 401;
+      apiResponse.message = ["Refresh Token not available"];
+      apiResponse.isSuccess = false;
+      return Promise.resolve(apiResponse);
+    }
+    return HttpClient.post<AuthResponse>(URL_REFRESH_TOKEN, { refreshToken }).then((resp) => {
+      if (resp.isSuccess && resp.data) {
+        setAccessAndRefreshToken(resp as ApiResponse<AuthResponse>);
+        return HttpClient.sendRequest(options.url || "/", options.method || "GET", options);
+      }
+      localStorage.removeItem(REFRESH_TOKEN);
+      // if unable to generate token from refresh token then mark request as 401 unAuthorized
+      apiResponse.status = 401;
+      apiResponse.isSuccess = false;
+      apiResponse.message = resp.message;
+      return apiResponse;
+    });
+    /* c8 ignore stop */
+  };
 
   HttpClient.setUrl = (url) => {
     return `${process.env.IS_SERVER ? API_URL : ""}${url}`;

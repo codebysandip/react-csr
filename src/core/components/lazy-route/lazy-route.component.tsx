@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useStore } from "react-redux";
-import { useLocation } from "react-router";
-import { INTERNET_NOT_AVAILABLE, TOAST } from "src/const";
+import { useLocation, useNavigate } from "react-router";
+import { INTERNET_NOT_AVAILABLE, ROUTE_LOGIN, TOAST } from "src/const";
+import { getRoute } from "src/core/functions/get-route";
+import { getAccessToken } from "src/core/functions/get-token";
 import { CompModule, CompModuleImport } from "src/core/models/route.model";
 import { Toaster } from "src/core/models/toaster.model";
 import { HttpClient, isOnline, retryPromise } from "src/core/services/http-client";
@@ -18,8 +20,17 @@ export default function LazyRoute(props: LazyProps) {
   const [Comp, setComp] = useState<CompModule | null>(null);
   const location = useLocation();
   const store = useStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const route = getRoute(location.pathname);
+    if (route && route.private) {
+      const token = getAccessToken();
+      if (!token) {
+        navigate(ROUTE_LOGIN);
+        return;
+      }
+    }
     retryPromise(isOnline, 1000, HttpClient.maxRetryCount)
       .then(() => {
         props.moduleProvider().then((moduleObj) => {

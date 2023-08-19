@@ -69,8 +69,11 @@ export default function (env, args, isProd = false) {
       path: getPath(`./env/${env.ENV}.env`),
     }),
   ];
+
+  if (!isCypress) {
+    plugins.push(new CleanWebpackPlugin());
+  }
   plugins.push(
-    new CleanWebpackPlugin(),
     new webpack.ProvidePlugin({
       process: "process/browser",
     }),

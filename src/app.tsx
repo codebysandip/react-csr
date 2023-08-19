@@ -1,17 +1,40 @@
 import { Header } from "core/components/header/header";
 import { useEffect, useState } from "react";
-import { matchPath, useLocation } from "react-router";
+import { matchPath, useLocation, useNavigate } from "react-router";
 import { Route, Routes } from "react-router-dom";
 import { CsrHead } from "src/core/components/csr-head/csr-head.comp";
-import { NO_HEADER_PATHS } from "./const";
+import { redirectTo } from "./app.redux";
+import { NO_HEADER_PATHS, ROUTE_403, ROUTE_LOGIN } from "./const";
 import LazyRoute from "./core/components/lazy-route/lazy-route.component";
 import { Toaster } from "./core/components/toaster/toaster.comp";
-import { useAppDispatch } from "./core/hook";
+import { useAppDispatch, useAppSelector } from "./core/hook";
+import { CommonService } from "./core/services/common.service";
+import { HttpClient } from "./core/services/http-client";
 import { Routes as PageRoutes } from "./routes";
 
 export function App(props: AppProps) {
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const appRedirectTo = useAppSelector((state) => state.app.redirectTo);
+  const navigate = useNavigate();
+
+  HttpClient.onResponse = (apiResponse, options) => {
+    if (!apiResponse.isSuccess) {
+      if (apiResponse.status === 400) {
+        if (apiResponse.message.length && options.showNotificationMessage) {
+          CommonService.toast({
+            type: "error",
+            message: apiResponse.message[0],
+          });
+        }
+      } else if (apiResponse.status === 401) {
+        dispatch(redirectTo({ path: ROUTE_LOGIN }));
+      } else if (apiResponse.status === 403) {
+        dispatch(redirectTo({ path: ROUTE_403 }));
+      }
+    }
+  };
+
   const checkHeader = () => {
     let isHeaderVisible = true;
     for (const path of NO_HEADER_PATHS) {
@@ -56,6 +79,12 @@ export function App(props: AppProps) {
       };
     }
   }, []);
+
+  useEffect(() => {
+    if (appRedirectTo) {
+      navigate(appRedirectTo.path, appRedirectTo.options);
+    }
+  }, [appRedirectTo]);
 
   return (
     <>

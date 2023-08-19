@@ -3,7 +3,7 @@ import { Component, ReactNode } from "react";
 import { connect } from "react-redux";
 import { PASSWORD_REGEX } from "src/const";
 import { FormGroup } from "src/core/components/form/FormGroup";
-import { WithRouterProps, withRouter } from "src/core/hoc/with-routes.hoc";
+import { withRouter, WithRouterProps } from "src/core/hoc/with-routes.hoc";
 import { FormValidation } from "src/core/services/form-validation.service";
 import { AppDispatch, RootState } from "src/redux/create-store";
 import { object, string } from "yup";

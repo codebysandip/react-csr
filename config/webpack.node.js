@@ -70,7 +70,12 @@ export default function (env, args) {
         },
       }),
     ],
-    plugins: [new webpack.DefinePlugin(definePluginObj), new Dotenv()],
+    plugins: [
+      new webpack.DefinePlugin(definePluginObj),
+      new Dotenv({
+        path: getPath(`./env/${env.ENV}.env`),
+      }),  
+    ],
     externalsPresets: { node: true },
   };
   return config;

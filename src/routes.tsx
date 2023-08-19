@@ -2,9 +2,9 @@ import { ROUTE_404, ROUTE_500, ROUTE_LOGIN } from "./const";
 import { IRoute } from "./core/models/route.model";
 
 /**
- * React routes of all pages.
- * Always define webpackChunkName for import. This chunk name will use while creating build.
- * This will help developers to debug in production.
+ * React routes of all pages.\
+ * Always define webpackChunkName for import. This chunk name will use while creating build. This
+ * will help developers to debug in production.
  */
 export const Routes: IRoute[] = [
   {
@@ -17,6 +17,7 @@ export const Routes: IRoute[] = [
       import(
         /* webpackChunkName: "product-detail" */ "examples/home/product-detail/product-detail.comp"
       ),
+    private: true,
   },
   {
     path: ROUTE_LOGIN,

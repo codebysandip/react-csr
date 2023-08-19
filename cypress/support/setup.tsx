@@ -12,7 +12,7 @@ export function setUp(Component: ReactNode) {
   cy.wrap(store).as("store");
   return mount(
     <BrowserRouter>
-      <ReactCsrApp appComp={Component} />
+      <ReactCsrApp appComp={Component} store={store} />
     </BrowserRouter>,
   );
 }

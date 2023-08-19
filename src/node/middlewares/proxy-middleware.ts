@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { Request, Response } from "express";
 import proxy from "express-http-proxy";
 
@@ -8,11 +9,16 @@ const isMultipartRequest = function (req: Request) {
 
 /**
  * Proxy request middleware
- * @param proxyUrl url to proxy request
- * @returns 
+ *
+ * @param proxyUrl Url to proxy request
+ * @returns
  */
 export const proxyMiddleware = function (proxyUrl: string) {
   return function (req: Request, res: Response, next: () => void) {
+    if (process.env.ENV !== "cypress") {
+      console.log(chalk.green(`Request ${req.url} proxy to ${proxyUrl}`));
+    }
+
     let reqAsBuffer = false;
     let reqBodyEncoding: string | null = "utf-8";
     // eslint-disable-next-line prefer-const
@@ -34,7 +40,7 @@ export const proxyMiddleware = function (proxyUrl: string) {
       proxyErrorHandler: /* istanbul ignore next */ (err, res) => {
         // change response as per need
         // this should match the error response of API
-        console.error(`Error in proxy request. Url:${req.url}!!`, err);
+        console.error(chalk.red(`Error in proxy request. Url:${req.url}!!`, err));
         res.status(500).send({
           message: "Something went wrong!!",
         });

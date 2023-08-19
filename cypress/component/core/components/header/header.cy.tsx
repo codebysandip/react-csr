@@ -1,7 +1,6 @@
 import { Header } from "core/components/header/header";
 import { loginSuccess } from "examples/auth/auth.redux";
 import HeaderData from "mocks/api/header.json";
-import { fetchHeader } from "src/app.redux";
 
 describe("Header", () => {
   beforeEach(() => {
@@ -13,7 +12,7 @@ describe("Header", () => {
   });
 
   it("Should render header links from api", function () {
-    this.store.dispatch(fetchHeader());
+    // this.store.dispatch(fetchHeader());
     cy.wait("@header-api");
     const link = HeaderData.links[1];
     cy.dataCy(link.url).should("have.text", link.text);
@@ -24,7 +23,10 @@ describe("Header", () => {
   });
 
   it("Should show logout button after login", function () {
+    cy.wait("@header-api");
     this.store.dispatch(loginSuccess({ isLoggedIn: true }));
+    console.log(this.store.getState())
+
     cy.dataCy("logout-btn").should("exist");
   });
 

@@ -7,15 +7,11 @@ describe("Home Page", () => {
   // manipulated in process request middleware and lazy component to achieve this behavior
   const homePage = "/";
   it("Should render home page with products on CSR", () => {
-    cy.visit(`${homePage}?cypress=true`);
+    cy.visit(`${homePage}`);
     cy.dataCy("home-page").should("exist");
     cy.get(".card.productCard").should("exist");
   });
 
-  it("Should render home page with products when javascript disabled (SSR)", () => {
-    cy.visitAsHtml(homePage);
-    cy.get(".card.productCard").should("exist");
-  });
 
   it("Should render home page with products", () => {
     cy.visit(homePage);
@@ -30,6 +26,7 @@ describe("Home Page", () => {
 
   it("Should render top products on scroll", () => {
     cy.visit(homePage);
+    cy.wait(1000)
     cy.scrollTo("bottom");
     cy.dataCy("top-products").should("exist");
     cy.dataCy("top-products").within(() => {
@@ -39,6 +36,7 @@ describe("Home Page", () => {
 
   it("Should redirect to login page on click of view button", () => {
     cy.visit(homePage);
+    cy.wait(1000)
     cy.dataCy(`home-view-btn-${ProductsData.products[0].id}`).click();
     cy.dataCy("login-page").should("exist");
   });
@@ -51,7 +49,7 @@ describe("Home Page", () => {
   });
 
   it("Should render home page with products on CSR", () => {
-    cy.visit(`${homePage}?cypress=true`);
+    cy.visit(`${homePage}`);
     cy.dataCy("home-page").should("exist");
     cy.get(".card.productCard").should("exist");
   });

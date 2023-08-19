@@ -8,7 +8,7 @@ module.exports = {
     "plugin:react/recommended",
     "standard",
     "plugin:@typescript-eslint/recommended",
-    "prettier",
+    "plugin:prettier/recommended",
     "plugin:react/jsx-runtime",
   ],
   parser: "@typescript-eslint/parser",
@@ -19,7 +19,7 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint", "react-hooks", "prettier"],
+  plugins: ["react", "@typescript-eslint", "react-hooks"],
   settings: {
     react: {
       version: "detect",

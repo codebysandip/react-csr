@@ -1,11 +1,7 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { HeaderData } from "./app.model";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AppState, HeaderData, RedirectTo } from "./app.model";
 import { GetState, ThunkApi } from "./core/models/common.model";
 import { AppDispatch } from "./redux/create-store";
-
-export interface AppState {
-  header?: HeaderData;
-}
 
 const initialState: AppState = {};
 
@@ -30,8 +26,11 @@ const appSlice = createSlice({
     fetchHeaderSuccess: (state, action: PayloadAction<HeaderData>) => {
       state.header = action.payload;
     },
+    redirectTo: (state, action: PayloadAction<RedirectTo>) => {
+      state.redirectTo = action.payload;
+    },
   },
 });
 
-export const { fetchHeaderSuccess } = appSlice.actions;
+export const { fetchHeaderSuccess, redirectTo } = appSlice.actions;
 export default appSlice.reducer;

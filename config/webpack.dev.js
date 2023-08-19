@@ -1,7 +1,6 @@
 import ReactRefreshPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import webpack from "webpack";
 import { merge } from "webpack-merge";
-import { getDevServerConfig } from "./functions/get-devServer-config.js";
 import commonConfig from "./webpack.common.js";
 
 /**
@@ -31,7 +30,6 @@ const devConfig = (env) => {
     },
     devtool: "inline-source-map",
   };
-  config.devServer = getDevServerConfig();
   return config;
 };
 

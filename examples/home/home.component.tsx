@@ -1,6 +1,6 @@
-import React, { Suspense, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { InView } from 'react-intersection-observer';
+import { InView } from "react-intersection-observer";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Image } from "src/core/components/image/image.comp";
@@ -11,13 +11,17 @@ import HomeReducer, { fetchProducts } from "./home.redux";
 
 const Home = (props: HomeProps) => {
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(fetchProducts());
   }, []);
+
   const pageData = props.pageData;
 
-  const TopProducts = React.lazy(() => import(/* webpackChunkName: "top-products" */"./components/top-products.comp"));
-  
+  const TopProducts = React.lazy(
+    () => import(/* webpackChunkName: "top-products" */ "./components/top-products.comp"),
+  );
+
   return (
     <>
       <Helmet>
@@ -51,22 +55,19 @@ const Home = (props: HomeProps) => {
       </div>
       {/* test code for InView */}
       <InView triggerOnce={true}>
-        {
-          ({ inView, ref }) => (
-            <div ref={ref}>
-              { inView ? 
-                (<Suspense>
-                  <TopProducts />
-                </Suspense>) : (
-                  <div className="d-flex flex-row flex-wrap">
-                  {[1, 2, 3].map((val) => (
-                    <div className="productCard skeleton" key={val}></div>
-                  ))}
-                </div>
-                ) }
-            </div>)
-          
-        }
+        {({ inView, ref }) => (
+          <div ref={ref}>
+            {inView ? (
+              <TopProducts />
+            ) : (
+              <div className="d-flex flex-row flex-wrap">
+                {[1, 2, 3].map((val) => (
+                  <div className="productCard skeleton" key={val}></div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </InView>
     </>
   );

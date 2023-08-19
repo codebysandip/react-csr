@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const collectCoverageOnlyFrom = require("./include-files-in-jest-exclude-from-cypress.cjs");
-
 module.exports = {
   "all": true,
   "report-dir": "coverage/cypress",
@@ -14,9 +11,8 @@ module.exports = {
     "src/**/*.tsx",
   ],
   "exclude": [
-    "cypress",
+    "cypress/*",
     "src/**/*.model.ts",
-    ...Object.keys(collectCoverageOnlyFrom)
   ],
   "excludeAfterRemap": true
 }

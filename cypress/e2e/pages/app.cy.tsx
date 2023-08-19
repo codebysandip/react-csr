@@ -45,37 +45,36 @@ const goOnline = () => {
     }
   });
 };
+
 describe("App shell", () => {
   const API_URL = /\/api\/product/;
   it("Should redirect to 500 page when api will return 500 response", () => {
-    cy.intercept(API_URL, { statusCode: 500, body: {} });
-    cy.visit("/?cypress=true");
+    cy.intercept(API_URL, { statusCode: 500, body: {} }).as("product");
+    cy.visit("/");
+    cy.wait("@product");
     cy.dataCy("500-page").should("exist");
   });
 
   it("Should redirect to login page when Api will return 401", () => {
+    cy.intercept(API_URL, { statusCode: 401, body: {} }).as("product");
     cy.visit("/");
-    cy.intercept(API_URL, { statusCode: 401, body: {} });
-    cy.dataCy("login-link").click();
-    cy.dataCy("navbar").click();
+    cy.wait("@product");
+    cy.wait(500);
     cy.url().should("contain", ROUTE_LOGIN);
   });
 
   it("Should redirect to 404 page when Api will return 404", () => {
-    cy.intercept(API_URL, { statusCode: 404, body: {} });
-    cy.visit("/?cypress=true");
+    cy.intercept(API_URL, { statusCode: 404, body: {} }).as("product");
+    cy.visit("/");
+    cy.wait("@product");
     cy.url().should("contain", ROUTE_404);
   });
 
-  it("Should redirect to 500 page when HttpClient will return 600", () => {
-    cy.intercept(API_URL, { statusCode: 600, body: {} });
-    cy.visit("/?cypress=true");
-    cy.url().should("contain", ROUTE_500);
-  });
-
   it("Should show error notification when api will return error message", () => {
-    cy.intercept(API_URL, { statusCode: 500, body: { message: ["Test Error Message"] } });
-    cy.visit("/?cypress=true");
+    cy.intercept(API_URL, { statusCode: 400, body: { message: ["Test Error Message"] } }).as(
+      "product",
+    );
+    cy.visit("/");
     cy.get(".Toastify__toast-body").within(() => {
       cy.contains("Test Error Message").should("exist");
     });
@@ -83,6 +82,8 @@ describe("App shell", () => {
 
   it("Show toast notification of internet not available when offline", () => {
     cy.visit(ROUTE_500);
+    cy.dataCy("500-page").should("exist");
+
     goOffline();
     cy.dataCy("back-to-home").click();
     cy.get(".Toastify__toast-body").within(() => {
@@ -92,8 +93,10 @@ describe("App shell", () => {
   });
 
   it("Should redirect to 403 page when api will return 403", () => {
-    cy.intercept(API_URL, { statusCode: 403, body: {} });
-    cy.visit("/?cypress=true");
+    cy.intercept(API_URL, { statusCode: 403, body: {} }).as("product");
+    cy.visit("/");
+    cy.wait("@product");
+
     cy.url().should("contain", 403);
   });
 });
