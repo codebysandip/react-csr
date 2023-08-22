@@ -1,63 +1,32 @@
 import chalk from "chalk";
-import { NextFunction, Request, Response } from "express";
-import webpack from "webpack";
-import WebpackDevMiddleware from "webpack-dev-middleware";
-import WebpackHotMiddleware from "webpack-hot-middleware";
-import webpackDevConfig from "../config/webpack.dev";
-import webpackProdConfig from "../config/webpack.prod";
-import { API_URL, LOCAL_API_SERVER } from "../src/const";
-import { proxyMiddleware } from "../src/node/middlewares/proxy-middleware";
-import { startNodeServer } from "../src/node/server";
-import { log } from "./logger";
+import { spawnSync } from "child_process";
+import { program } from "commander";
 
-const env = process.env.ENV;
-log(`environment: ${env}`);
-let webpackConfig: any;
+program.option("-e, --env <string...>", "Environment", "development");
 
-const baseEnv = { IS_LOCAL: "true", ENV: env };
-const isDev = env === "development" || env === "cypress";
-// webpack client build
-if (isDev) {
-  webpackConfig = webpackDevConfig(baseEnv, {});
-} else {
-  webpackConfig = webpackProdConfig(baseEnv, {});
-}
-const compiler = webpack(webpackConfig);
+program.parse();
 
-const middlewares = [];
-// start webpack dev server for HMR
-middlewares.push(
-  WebpackDevMiddleware(compiler, {
-    publicPath: webpackConfig.output.publicPath,
-    serverSideRender: false,
-    writeToDisk: true,
-  }),
+const options = program.opts();
+
+console.log(chalk.yellowBright("Build react app in production build mode!!"));
+console.log();
+spawnSync(
+  // eslint-disable-next-line max-len
+  `npx webpack --config ./config/webpack.prod.js --env ${options.env.join(" --env ")}`,
+  {
+    shell: true,
+    stdio: "inherit",
+  },
 );
 
-middlewares.push(WebpackHotMiddleware(compiler, {}));
+console.log(chalk.yellowBright("Build node sering app!!"));
+console.log();
 
-/* istanbul ignore if */
-if (!API_URL) {
-  throw new Error(
-    `Please add env/${process.env.ENV}.env file if not available. Add API_BASE_URL in .env file`,
-  );
-}
-console.log(chalk.yellowBright("/api/* request will proxy to ", API_URL));
-
-middlewares.push((req: Request, resp: Response, next: NextFunction) => {
-  if (req.url.startsWith("/api/")) {
-    proxyMiddleware(API_URL || "")(req, resp, next);
-    return;
-  }
-  next();
-});
-
-const app = startNodeServer(middlewares);
-
-if (process.env.IS_LOCAL) {
-  // Following code is just for reference
-  // If api is not available and you want to return dummy response
-  // create a test api in test-api.ts and add here
-  // Don't forget to remove proxy otherwise response will always come from test api
-  app.get("/api/products", proxyMiddleware(LOCAL_API_SERVER));
-}
+spawnSync(
+  // eslint-disable-next-line max-len
+  `npx webpack --config ./config/webpack.node.js --env ${options.env.join(" --env ")}`,
+  {
+    shell: true,
+    stdio: "inherit",
+  },
+);

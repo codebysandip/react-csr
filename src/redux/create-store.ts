@@ -7,7 +7,7 @@ import {
   MiddlewareArray,
   ReducersMapObject,
   Store,
-  ThunkDispatch
+  ThunkDispatch,
 } from "@reduxjs/toolkit";
 import AuthReducer from "examples/auth/auth.redux";
 import { ThunkMiddleware } from "redux-thunk";
@@ -52,7 +52,7 @@ export function createStore(lazyReducers: ReducersMapObject = {}): AppStore {
       });
     },
     preloadedState,
-    devTools: process.env.IS_LOCAL,
+    devTools: process.env.IS_LOCAL === "true",
   });
   return store as AppStore;
 }

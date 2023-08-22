@@ -8,5 +8,6 @@
   "bracketSpacing": true,
   "plugins": [
     "prettier-plugin-jsdoc"
-  ]
+  ],
+  "endOfLine": "auto"
 }

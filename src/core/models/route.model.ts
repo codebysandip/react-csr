@@ -1,19 +1,21 @@
 import { Reducer } from "@reduxjs/toolkit";
 
 export interface IRoute {
-  /**
-   * React route path
-   */
+  /** React route path */
   path: string;
-  /**
-   * Lazy loaded component
-   */
+
+  /** Lazy loaded component */
   component: CompModuleImport;
 
-  /**
-   * route which can access only after login
-   */
+  /** Route which can access only after login */
   private?: boolean;
+
+  /**
+   * Child Routes
+   *
+   * @link https://reactrouter.com/en/main/components/outlet
+   */
+  children?: IRoute[];
 }
 
 export type CompModule = {

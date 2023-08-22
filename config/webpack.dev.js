@@ -1,6 +1,7 @@
 import ReactRefreshPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import webpack from "webpack";
 import { merge } from "webpack-merge";
+import { isLocalFn } from "./functions/helper-functions.js";
 import commonConfig from "./webpack.common.js";
 
 /**
@@ -12,8 +13,12 @@ import commonConfig from "./webpack.common.js";
  * @returns Dev env webpack config
  */
 const devConfig = (env) => {
+  /** Is Build running for local development */
+  const isLocal = isLocalFn(env);
+  const isCypress = env.ENV === "cypress";
+
   const plugins = [];
-  if (env.ENV === "development") {
+  if (isLocal && !isCypress) {
     plugins.push(
       new ReactRefreshPlugin({
         include: "examples",
@@ -30,6 +35,7 @@ const devConfig = (env) => {
     },
     devtool: "inline-source-map",
   };
+  // config.devServer = getDevServerConfig(env);
   return config;
 };
 

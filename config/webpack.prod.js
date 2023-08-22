@@ -23,7 +23,7 @@ const prodConfig = (env, outFolder) => {
   const isLocal = isLocalFn(env);
 
   // on github action don't compress to save build time
-  if (process.env.GITHUB_ACTION !== "true") {
+  if (env.action !== "true") {
     plugins.push(
       new CompressionPlugin({
         filename: "[file].gz[query]",
@@ -55,7 +55,7 @@ const prodConfig = (env, outFolder) => {
     );
   }
 
-  if (process.env.STATS) {
+  if (env.stats) {
     plugins.push(
       new BundleAnalyzerPlugin({
         analyzerMode: "static",

@@ -6,7 +6,7 @@ declare global {
             /**
              * IS_LOCAL enables webpack to run in development mode
              */
-            IS_LOCAL: boolean;
+            IS_LOCAL: string;
             /**
              * ENV to decide webpack to run in development or production mode
              * It can also use to load different environment variables based on env like staging etc.

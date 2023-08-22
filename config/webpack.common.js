@@ -29,18 +29,17 @@ export default function (env, args, isProd = false) {
 
   /** Is Build running for local development */
   const isLocal = isLocalFn(env);
+  const isCypress = env.ENV === "cypress";
   /** React client side css, js and other static will go here after build */
   const clientBuildPath = getPath("build/public");
   /** Output folder for client as well as server */
   const outFolder = clientBuildPath;
-  const isDev = env.ENV === "development";
-  const isCypress = env.ENV === "cypress";
 
   const entry = {};
 
   /** Entry.server will produce client.js in build folder */
   entry.client = [getPath("src/client.tsx")];
-  if (isLocal && isDev) {
+  if (isLocal && !isCypress) {
     entry.client.push(
       "webpack-hot-middleware/client?reload=true",
       "/node_modules/react-refresh/runtime.js",
@@ -66,7 +65,7 @@ export default function (env, args, isProd = false) {
       chunkFilename: miniCssChunkName,
     }),
     new Dotenv({
-      path: getPath(`./env/${env.ENV}.env`),
+      path: getPath(`env/${env.ENV}.env`),
     }),
   ];
 
@@ -155,7 +154,7 @@ export default function (env, args, isProd = false) {
                     react: {
                       runtime: "automatic",
                       refresh: isLocal && env.ENV !== "cypress",
-                      development: isDev,
+                      development: isLocal,
                     },
                   },
                 },

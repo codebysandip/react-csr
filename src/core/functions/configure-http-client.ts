@@ -1,18 +1,12 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { AuthResponse } from "examples/auth/auth.model";
 import { setAccessAndRefreshToken } from "examples/auth/auth.redux";
-import {
-  ACCESS_TOKEN,
-  API_URL,
-  INTERNET_NOT_AVAILABLE,
-  REFRESH_TOKEN,
-  URL_REFRESH_TOKEN
-} from "src/const";
+import { ACCESS_TOKEN, INTERNET_NOT_AVAILABLE, REFRESH_TOKEN, URL_REFRESH_TOKEN } from "src/const";
 import {
   ApiResponse,
-  getDefaultApiResponseObj,
   HttpClient,
-  HttpClientOptions
+  HttpClientOptions,
+  getDefaultApiResponseObj,
 } from "../services/http-client";
 
 export function getAxiosResponseFromResponse(response: AxiosResponse<any> | AxiosError<any>) {
@@ -81,7 +75,8 @@ export function configureHttpClient() {
     return resp?.data?.status || resp?.status || 0;
   };
 
-  HttpClient.getAuthToken = (options) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  HttpClient.getAuthToken = (_options) => {
     return localStorage.getItem(ACCESS_TOKEN) || "";
   };
 
@@ -120,7 +115,9 @@ export function configureHttpClient() {
   };
 
   HttpClient.setUrl = (url) => {
-    return `${process.env.IS_SERVER ? API_URL : ""}${url}`;
+    const isLocal = JSON.parse(process.env.IS_LOCAL || "false") as boolean;
+    const newUrl = `${isLocal ? url : process.env.API_BASE_URL + url}`;
+    return newUrl;
   };
 
   HttpClient.retryTime = process.env.ENV === "cypress" ? 10 : 1000;
