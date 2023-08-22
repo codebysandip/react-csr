@@ -16,8 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.PAT }}
 
       - name: Run test with Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
