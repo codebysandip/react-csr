@@ -1,4 +1,4 @@
-import { ROUTE_404, ROUTE_500, ROUTE_LOGIN } from "./const";
+import { ROUTE_403, ROUTE_404, ROUTE_500, ROUTE_LOGIN } from "./const";
 import { IRoute } from "./core/models/route.model";
 
 /**
@@ -32,5 +32,9 @@ export const Routes: IRoute[] = [
   {
     path: ROUTE_500,
     component: () => import(/* webpackChunkName: "500" */ "src/pages/error/500/500.component"),
+  },
+  {
+    path: ROUTE_403,
+    component: () => import(/* webpackChunkName: "404" */ "src/pages/error/403/403.component"),
   },
 ];

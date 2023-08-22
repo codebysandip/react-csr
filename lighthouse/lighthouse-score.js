@@ -10,7 +10,7 @@ const build = spawnSync("npm run build", { stdio: "inherit", encoding: "utf-8", 
 if (build.status) {
   exit(build.status);
 }
-const deploy = spawnSync("npm run pm2:prod:heroku", {
+const deploy = spawnSync("npm run pm2:prod", {
   stdio: "inherit",
   encoding: "utf-8",
   shell: true,
@@ -35,7 +35,7 @@ function startLighthouse() {
       // screenEmulation: { width: 1280, height: 720 },
       // budgetPath: join(cwd(), "lighthouse/budget.json"),
     };
-    const runnerResult = await lighthouse("http://localhost:5000", options);
+    const runnerResult = await lighthouse("http://localhost:5200", options);
 
     // `.report` is the HTML report as a string
     const reportHtml = runnerResult.report;
@@ -74,11 +74,7 @@ function startLighthouse() {
         throw new Error(`Lighthouse score should be greater than 90 for each category`);
       }
     }
-    if (perfScore < 90 || seoScore < 90 || pwaScore < 90) {
-      console.warn("Restarting lighthouse test. Because score is below 90");
-      startLighthouse();
-      return;
-    }
+
     // replace score
     svgStr = svgStr
       .replace("{performance_score}", perfScore)

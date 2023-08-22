@@ -3,10 +3,8 @@ import { AuthResponse } from "examples/auth/auth.model";
 import { setAccessAndRefreshToken } from "examples/auth/auth.redux";
 import { ACCESS_TOKEN, INTERNET_NOT_AVAILABLE, REFRESH_TOKEN, URL_REFRESH_TOKEN } from "src/const";
 import {
-  ApiResponse,
-  HttpClient,
-  HttpClientOptions,
-  getDefaultApiResponseObj,
+  ApiResponse, getDefaultApiResponseObj, HttpClient,
+  HttpClientOptions
 } from "../services/http-client";
 
 export function getAxiosResponseFromResponse(response: AxiosResponse<any> | AxiosError<any>) {

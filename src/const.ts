@@ -40,7 +40,10 @@ export const IS_DEV = process.env.ENV === "development";
 export const TEST_API_PORT = process.env.TEST_API_PORT || 3002;
 export const LOCAL_API_SERVER = `http://localhost:${TEST_API_PORT}`;
 
-export const API_URL = process.env.ENV === "cypress" || process.env.LOCAL_API_SERVER === "true" ? LOCAL_API_SERVER : process.env.API_BASE_URL;
+export const API_URL =
+  process.env.ENV === "cypress" || process.env.LOCAL_API_SERVER === "true"
+    ? LOCAL_API_SERVER
+    : process.env.API_BASE_URL;
 export const IS_CYPRESS = process.env.ENV === "cypress";
 
 export const PUBLIC_FOLDER = "build/public";
